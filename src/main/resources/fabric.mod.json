@@ -16,11 +16,11 @@
 	"icon": "assets/pesky_seagulls/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"client": [
+			"net.hyper_pigeon.pesky_seagulls.client.PeskySeagullsClient"
+		],
 		"main": [
 			"net.hyper_pigeon.pesky_seagulls.PeskySeagulls"
-		],
-		"client": [
-			"net.hyper_pigeon.pesky_seagulls.PeskySeagullsClient"
 		]
 	},
 	"mixins": [
