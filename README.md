@@ -1,8 +1,8 @@
-# Fabric Example Mod
+# Pesky Seagulls
 
-## Setup
+## About
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+A mod made for Modfest 1.20 that adds bothersome seagulls to Minecraft. 
 
 ## License
 
