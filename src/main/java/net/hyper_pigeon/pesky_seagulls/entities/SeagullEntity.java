@@ -85,6 +85,9 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         if (!this.isOnGround() && vec3d.y < 0.0) {
             this.setVelocity(vec3d.multiply(1.0, 0.6, 1.0));
         }
+        if (this.isTouchingWater()) {
+            this.setVelocity(this.getVelocity().add(0.0, 0.010, 0.0));
+        }
     }
 
     public boolean isPushedByFluids() {
