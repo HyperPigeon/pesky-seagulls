@@ -1,5 +1,6 @@
 package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
+import net.hyper_pigeon.pesky_seagulls.entities.SeagullEntity;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +10,15 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomHoverTarg
 import org.jetbrains.annotations.Nullable;
 
 public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends SetRandomHoverTarget<E> {
+
+    @Override
+    protected void start(E entity) {
+        if(entity instanceof SeagullEntity seagullEntity) {
+            seagullEntity.swapNavigation(true);
+        }
+        super.start(entity);
+    }
+
     @Nullable
     protected Vec3d getTargetPos(E entity) {
         Vec3d entityFacing = entity.getRotationVec(0);

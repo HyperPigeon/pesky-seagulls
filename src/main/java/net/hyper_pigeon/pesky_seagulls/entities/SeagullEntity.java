@@ -2,14 +2,15 @@ package net.hyper_pigeon.pesky_seagulls.entities;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.SetRandomSeagullFlightTarget;
+import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.SetRandomSeagullWalkTarget;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.control.SeagullMoveControl;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.memory_types.SeagullMemoryTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.brain.Brain;
+import net.minecraft.entity.ai.control.FlightMoveControl;
+import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.control.YawAdjustingLookControl;
-import net.minecraft.entity.ai.pathing.BirdNavigation;
-import net.minecraft.entity.ai.pathing.EntityNavigation;
-import net.minecraft.entity.ai.pathing.PathNodeType;
+import net.minecraft.entity.ai.pathing.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -25,9 +26,12 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.InWaterSensor;
+import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
+import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.*;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,12 +39,16 @@ import java.util.List;
 
 public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<SeagullEntity> {
 
+    private boolean paddling;
+
     public SeagullEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
-        this.moveControl = new SeagullMoveControl(this, 20, 10,0.1F,false);
-        this.lookControl = new YawAdjustingLookControl(this, 10);
-        this.setPathfindingPenalty(PathNodeType.WATER_BORDER, 0.0F);
-        this.setPathfindingPenalty(PathNodeType.WATER, 0.0F);
+        this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, -1.0F);
+        this.setPathfindingPenalty(PathNodeType.WATER, -1.0F);
+        this.setPathfindingPenalty(PathNodeType.WATER_BORDER, 16.0F);
+        this.setPathfindingPenalty(PathNodeType.COCOA, -1.0F);
+        this.setPathfindingPenalty(PathNodeType.FENCE, -1.0F);
+        swapNavigation(false);
     }
 
     public static DefaultAttributeContainer.Builder createSeagullAttributes() {
@@ -59,6 +67,18 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return birdNavigation;
     }
 
+    public void swapNavigation(boolean isFlying) {
+        if(isFlying){
+            this.navigation = createNavigation(this.getWorld());
+            this.moveControl = new FlightMoveControl(this,20,false);
+
+        }
+        else {
+            this.navigation = new MobNavigation(this, this.getWorld());
+            this.moveControl = new MoveControl(this);
+        }
+    }
+
     public void tickMovement(){
         super.tickMovement();
         Vec3d vec3d = this.getVelocity();
@@ -67,9 +87,11 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         }
     }
 
-    public boolean isClimbing() {
+    public boolean isPushedByFluids() {
         return false;
     }
+
+    public boolean isClimbing() { return false; }
 
     public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
@@ -90,13 +112,15 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         tickBrain(this);
     }
 
-    public boolean isPaddling(){
-        return BrainUtils.getMemory(this, SeagullMemoryTypes.IS_PADDLING.get()) == Boolean.TRUE;
-    }
 
     @Override
     public List<? extends ExtendedSensor<? extends SeagullEntity>> getSensors() {
         return ObjectArrayList.of(
+                new NearbyPlayersSensor<>(),
+                new NearestItemSensor<>(),
+                new HurtBySensor<>(),
+                new NearbyBlocksSensor<>(),
+                new GenericAttackTargetSensor<>(),
                 new InWaterSensor<>()
         );
     }
@@ -104,6 +128,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     @Override
     public BrainActivityGroup<? extends SeagullEntity> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
+                new FloatToSurfaceOfFluid<>(),
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>());
     }
@@ -112,7 +137,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public BrainActivityGroup<? extends SeagullEntity> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new OneRandomBehaviour<>(
-                        new SetRandomSeagullFlightTarget<>().setRadius(15,5),
+                        new SetRandomSeagullFlightTarget<>().setRadius(10),
+                        new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater(),
                         new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
                 ));
     }
