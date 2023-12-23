@@ -9,7 +9,6 @@ import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
@@ -18,21 +17,12 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends ExtendedBehaviour<E> {
-    private static final List<Pair<MemoryModuleType<?>, MemoryModuleState>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER, MemoryModuleState.VALUE_PRESENT)); // TODO whats this for?
+    private static final List<Pair<MemoryModuleType<?>, MemoryModuleState>> MEMORY_REQUIREMENTS = ObjectArrayList.of(Pair.of(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER, MemoryModuleState.VALUE_PRESENT));
     protected BiFunction<E, Vec3d, Float> speedModifier = (entity, targetPos) -> 1f;
     private PlayerEntity targetPlayer;
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryModuleState>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
-    }
-
-    /**
-     * Set the movespeed modifier for the path when chosen.
-     * @param modifier The movespeed modifier/multiplier
-     * @return this
-     */
-    public MoveToNearestPlayerHoldingFood<E> speedModifier(float modifier) {
-        return speedModifier((entity, targetPos) -> modifier);
     }
 
     /**
