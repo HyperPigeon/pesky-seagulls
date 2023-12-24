@@ -1,9 +1,7 @@
 package net.hyper_pigeon.pesky_seagulls.entities;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.MoveToNearestVisibleWantedItem;
-import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.SetRandomSeagullFlightTarget;
-import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.SetRandomSeagullWalkTarget;
+import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
@@ -181,13 +179,13 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     @Override
     public BrainActivityGroup<? extends SeagullEntity> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
+                new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
+                new StealFoodFromPlayer<>().whenStarting(pathAwareEntity -> setFlying()),
                 new FloatToSurfaceOfFluid<>(),
-                new MoveToNearestVisibleWantedItem<>().whenStarting((pathAwareEntity) ->
-                {
-                    setFlying();
-                }),
+                new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()),
                 new LookAtTarget<>(),
-                new MoveToWalkTarget<>());
+                new MoveToWalkTarget<>()
+                );
     }
 
     @Override
