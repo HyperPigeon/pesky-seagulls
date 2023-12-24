@@ -32,21 +32,23 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
 
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        // TODO targeting players with food even if they aren't nearest
-        // TODO don't run if they have a full inventory?
+        // TODO targeting players with food even if they aren't the nearest
+        if (!entity.getMainHandStack().isEmpty()) {
+            return false;
+        }
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return canStealFromPlayer(player, entity);
     }
 
-    private void stealFood(ItemStack stolenFood, PlayerEntity player, E entity) {
+    private void stealFood(ItemStack stolenFood, E entity) {
         ItemStack obtainedFood = stolenFood.copyWithCount(1);
         stolenFood.setCount(stolenFood.getCount()-1);
         entity.equipStack(EquipmentSlot.MAINHAND, obtainedFood);
-        // TODO drop currently held
     }
 
     @Override
     protected void start(E entity) {
+        // TODO duplicated code with MoveToNearestPlayerHoldingFood
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
         if (player == null) {
             return;
@@ -55,10 +57,10 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
         ItemStack mainHandStack = targetPlayer.getMainHandStack();
         ItemStack offHandStack;
         if (mainHandStack != null && mainHandStack.isFood()) {
-            stealFood(player.getMainHandStack(), player, entity);
+            stealFood(player.getMainHandStack(), entity);
         } else if ((offHandStack = targetPlayer.getOffHandStack())!= null
                 && offHandStack.isFood()) {
-            stealFood(player.getOffHandStack(), player, entity);
+            stealFood(player.getOffHandStack(), entity);
         }
     }
 

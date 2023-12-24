@@ -25,19 +25,11 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
         return MEMORY_REQUIREMENTS;
     }
 
-    /**
-     * Set the movespeed modifier for the path when chosen.
-     * @param function The movespeed modifier/multiplier function
-     * @return this
-     */
-    public MoveToNearestPlayerHoldingFood<E> speedModifier(BiFunction<E, Vec3d, Float> function) {
-        this.speedModifier = function;
-
-        return this;
-    }
-
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
+        if (!entity.getMainHandStack().isEmpty()) {
+            return false;
+        }
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return player != null
                 && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood());
@@ -47,6 +39,9 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
     @Override
     protected void start(E entity) {
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
+        if (player == null) {
+            return;
+        }
         this.targetPlayer = player;
 
         EntityLookTarget entityLookTarget = new EntityLookTarget(player, true);
