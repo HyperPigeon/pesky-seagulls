@@ -170,9 +170,6 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     @Override
     protected void mobTick() {
         tickBrain(this);
-        if(BrainUtils.getTargetOfEntity(this) != null){
-            this.setNoGravity(true);
-        }
     }
 
 
