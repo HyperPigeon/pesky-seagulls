@@ -187,6 +187,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                     new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()),
                     new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
                     new StealFoodFromPlayer<>().whenStarting(pathAwareEntity -> setFlying()),
+                    new EatFoodInMainHand<>(),
                     new SeagullAvoidEntity<>().avoiding(livingEntity -> !this.getMainHandStack().isEmpty() && livingEntity instanceof PlayerEntity).noCloserThan(8).speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()),
                     new LookAtTarget<>(),
                     new MoveToWalkTarget<>()
