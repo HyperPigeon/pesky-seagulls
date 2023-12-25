@@ -49,7 +49,7 @@ public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends Set
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
                                     entity.getWorld().getTopY(),
-                                    pos -> NavigationConditions.isSolidAt(entity, pos)
+                                    pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity,pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)
                                     ? blockPos2

@@ -8,13 +8,17 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.control.FlightMoveControl;
 import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.pathing.*;
+import net.minecraft.entity.ai.pathing.AmphibiousSwimNavigation;
+import net.minecraft.entity.ai.pathing.BirdNavigation;
+import net.minecraft.entity.ai.pathing.EntityNavigation;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
@@ -32,10 +36,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.InWaterSensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearestItemSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -58,7 +59,9 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 12.0)
                 .add(EntityAttributes.GENERIC_FLYING_SPEED, 1.25F)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25F);
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25F)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16F);
+
     }
 
 
@@ -167,6 +170,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public List<? extends ExtendedSensor<? extends SeagullEntity>> getSensors() {
         return ObjectArrayList.of(
                 new NearbyPlayersSensor<>(),
+                new NearbyLivingEntitySensor<>(),
                 new HurtBySensor<>(),
                 new GenericAttackTargetSensor<>(),
                 new NearestItemSensor<SeagullEntity>().
@@ -179,13 +183,14 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     @Override
     public BrainActivityGroup<? extends SeagullEntity> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
-                new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
-                new StealFoodFromPlayer<>().whenStarting(pathAwareEntity -> setFlying()),
-                new FloatToSurfaceOfFluid<>(),
-                new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()),
-                new LookAtTarget<>(),
-                new MoveToWalkTarget<>()
-                );
+                    new FloatToSurfaceOfFluid<>(),
+                    new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()),
+                    new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
+                    new StealFoodFromPlayer<>().whenStarting(pathAwareEntity -> setFlying()),
+                    new SeagullAvoidEntity<>().avoiding(livingEntity -> !this.getMainHandStack().isEmpty() && livingEntity instanceof PlayerEntity).noCloserThan(8).speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()),
+                    new LookAtTarget<>(),
+                    new MoveToWalkTarget<>()
+        );
     }
 
     @Override
@@ -193,15 +198,12 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return BrainActivityGroup.idleTasks(
                 new OneRandomBehaviour<>(
                         new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
-                        {
-                            setFlying();
-                        }),
+                                setFlying()),
                         new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
-                        {
-                            setGrounded();
-                        }),
+                                setGrounded()),
                         new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
-                ));
+                )
+                );
     }
 
     @Override
