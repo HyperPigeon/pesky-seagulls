@@ -19,6 +19,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -154,8 +155,10 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if(hand == Hand.MAIN_HAND && player.getMainHandStack().isEmpty() && !this.getMainHandStack().isEmpty()) {
-            player.equipStack(EquipmentSlot.MAINHAND, this.getMainHandStack());
+            ItemStack itemStack = this.getMainHandStack().copy();
             this.getMainHandStack().decrement(1);
+            player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+            return ActionResult.SUCCESS;
         }
         return super.interactMob(player, hand);
     }
