@@ -149,7 +149,6 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
 
     @Override
     protected void start(E entity) {
-        System.out.println("Fleeing players...");
         entity.getNavigation().startMovingAlong(this.runPath, this.speedModifier);
     }
 
