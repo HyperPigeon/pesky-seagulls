@@ -17,7 +17,7 @@ public class EatFoodInMainHand<E extends PathAwareEntity> extends ExtendedBehavi
     }
 
     public boolean hasFood(E entity) {
-        return entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
     }
 
     @Override
