@@ -44,6 +44,7 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
         ItemStack obtainedFood = stolenFood.copyWithCount(1);
         stolenFood.setCount(stolenFood.getCount()-1);
         entity.equipStack(EquipmentSlot.MAINHAND, obtainedFood);
+        entity.updateDropChances(EquipmentSlot.MAINHAND);
     }
 
     @Override
