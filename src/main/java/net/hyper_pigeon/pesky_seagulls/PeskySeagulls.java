@@ -31,7 +31,7 @@ public class PeskySeagulls implements ModInitializer {
 	public static final EntityType<SeagullEntity> SEAGULL_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE, new Identifier("pesky_seagulls", "seagull"),
 			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, SeagullEntity::new)
-					.dimensions(EntityDimensions.fixed(0.5F, 0.9F))
+					.dimensions(EntityDimensions.fixed(1F, 1F))
 					.build()
 	);
 
