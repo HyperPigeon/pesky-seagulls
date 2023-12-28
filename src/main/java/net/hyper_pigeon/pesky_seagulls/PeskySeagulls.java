@@ -26,16 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PeskySeagulls implements ModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("pesky_seagulls");
+	public static final String MOD_ID = "pesky_seagulls";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final EntityType<SeagullEntity> SEAGULL_ENTITY = Registry.register(
-			Registries.ENTITY_TYPE, new Identifier("pesky_seagulls", "seagull"),
+			Registries.ENTITY_TYPE, new Identifier(MOD_ID, "seagull"),
 			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, SeagullEntity::new)
 					.dimensions(EntityDimensions.fixed(1F, 1F))
 					.build()
 	);
 
-	public static final TagKey<Biome> SEAGULL_SPAWN_BIOMES = TagKey.of(RegistryKeys.BIOME, new Identifier("pesky_seagulls", "seagull_spawn_biomes"));
+	public static final TagKey<Biome> SEAGULL_SPAWN_BIOMES = TagKey.of(RegistryKeys.BIOME, new Identifier(MOD_ID, "seagull_spawn_biomes"));
 
 
 	@Override
