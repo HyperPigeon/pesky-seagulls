@@ -48,16 +48,19 @@ public class MoveToNearestVisibleWantedItem<E extends PathAwareEntity> extends E
         return this;
     }
 
+    public boolean hasFood(E entity) {
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+    }
+
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
         ItemEntity itemEntity = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM);
-        return entity.getMainHandStack().isEmpty() && (this.targetItemEntity == null || entity.squaredDistanceTo(targetItemEntity) > entity.squaredDistanceTo(itemEntity));
+        return !hasFood(entity) && (this.targetItemEntity == null || entity.squaredDistanceTo(targetItemEntity) > entity.squaredDistanceTo(itemEntity));
     }
 
 
     @Override
     protected void start(E entity) {
-
         ItemEntity itemEntity = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM);
         this.targetItemEntity = itemEntity;
 
@@ -71,7 +74,14 @@ public class MoveToNearestVisibleWantedItem<E extends PathAwareEntity> extends E
         BrainUtils.setMemory(entity, MemoryModuleType.LOOK_TARGET, entityLookTarget);
     }
 
-    protected boolean shouldKeepRunning(E entity) {
-        return BrainUtils.hasMemory(entity, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM) && this.targetItemEntity != null && !this.targetItemEntity.isRemoved();
-    }
+//    protected boolean shouldKeepRunning(E entity) {
+//        return !hasFood(entity) && BrainUtils.hasMemory(entity, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM) && this.targetItemEntity != null && !this.targetItemEntity.isRemoved();
+//    }
+//
+//
+//    protected void stop(E entity){
+//        //clear the current walk and look target
+//        BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+//        BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
+//    }
 }
