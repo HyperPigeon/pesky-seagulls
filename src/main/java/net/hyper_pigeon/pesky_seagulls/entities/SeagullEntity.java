@@ -2,6 +2,7 @@ package net.hyper_pigeon.pesky_seagulls.entities;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.*;
+import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
@@ -19,7 +20,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -47,6 +47,9 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     private static final Vec3i ITEM_PICKUP_RANGE_EXPANDER = new Vec3i(1,1,1);
 
+    public AnimationState walkingAnimationState = new AnimationState();
+    public AnimationState flyingAnimationState = new AnimationState();
+
     public SeagullEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, -1.0F);
@@ -57,6 +60,10 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         swapNavigation(true);
     }
 
+    public boolean isFlapping() {
+        return !this.isOnGround();
+    }
+
     public static DefaultAttributeContainer.Builder createSeagullAttributes() {
         return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 12.0)
@@ -65,7 +72,6 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16F);
 
     }
-
 
     protected EntityNavigation createNavigation(World world) {
         BirdNavigation birdNavigation = new BirdNavigation(this, world);
@@ -182,6 +188,18 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         tickBrain(this);
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.getEntityWorld().isClient()) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        flyingAnimationState.setRunning(isFlapping(), this.age);
+        walkingAnimationState.setRunning((float)this.getVelocity().horizontalLengthSquared() > 1.0E-5F && !isFlapping(), this.age);
+    }
 
     @Override
     public List<? extends ExtendedSensor<? extends SeagullEntity>> getSensors() {

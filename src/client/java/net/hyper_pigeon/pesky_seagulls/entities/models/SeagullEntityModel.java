@@ -58,19 +58,23 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
 
         ModelPartData lowerLeftWing = leftWing.addChild("lowerLeftWing", ModelPartBuilder.create().uv(12, 37).cuboid(0.0F, 0.0F, -6.0F, 1.0F, 2.0F, 10.0F, new Dilation(0.0F)), ModelTransform.pivot(-1.5F, 3.0F, -6.0F));
 
-        ModelPartData rightWing = body.addChild("rightWing", ModelPartBuilder.create(), ModelTransform.pivot(3.0F, -6.0F, 0.0F));
+        ModelPartData rightWing = body.addChild("rightWing", ModelPartBuilder.create(), ModelTransform.pivot(3.0F, -6.0F, 4.0F));
 
-        ModelPartData upperRightWing2 = rightWing.addChild("upperRightWing2", ModelPartBuilder.create().uv(25, 24).cuboid(-1.0F, -4.0F, -10.0F, 2.0F, 5.0F, 11.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, 4.0F, 3.75F));
+        ModelPartData upperRightWing2 = rightWing.addChild("upperRightWing2", ModelPartBuilder.create().uv(25, 24).cuboid(-1.0F, 0.0F, -5.0F, 2.0F, 5.0F, 11.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, 0.0F, -5.25F));
 
-        ModelPartData lowerRightWing = rightWing.addChild("lowerRightWing", ModelPartBuilder.create().uv(0, 35).cuboid(-1.0F, -2.0F, -6.0F, 1.0F, 2.0F, 10.0F, new Dilation(0.0F)), ModelTransform.pivot(1.5F, 5.0F, -2.0F));
+        ModelPartData lowerRightWing = rightWing.addChild("lowerRightWing", ModelPartBuilder.create().uv(0, 35).cuboid(-1.0F, 0.0F, -6.0F, 1.0F, 2.0F, 10.0F, new Dilation(0.0F)), ModelTransform.pivot(1.5F, 3.0F, -6.0F));
         return TexturedModelData.of(modelData, 64, 64);
     }
+
     @Override
     public void setAngles(SeagullEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(netHeadYaw, headPitch);
+        float speedMult = (Math.min((float)entity.getVelocity().lengthSquared() * 100.0F, 8F))*2;
 
         this.animateMovement(SeagullAnimations.WALKING, limbSwing, limbSwingAmount, 2f, 2.5f);
+        this.updateAnimation(entity.flyingAnimationState, SeagullAnimations.FLY, ageInTicks);
+        this.updateAnimation(entity.walkingAnimationState, SeagullAnimations.WALKING, ageInTicks, speedMult);
     }
 
     private void setHeadAngles(float headYaw, float headPitch) {
