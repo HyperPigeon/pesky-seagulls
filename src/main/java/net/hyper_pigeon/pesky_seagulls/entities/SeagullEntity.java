@@ -242,17 +242,17 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                                     return 2400;
                                 }
                                 return 0;
-                            })
-                    ),
-                    new OneRandomBehaviour<>(
-                            new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
-                                    setFlying()),
-                            new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(5).whenStarting((pathAwareEntity) ->
-                                    setFlying()),
-                            new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
-                                    setGrounded()),
-                            new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
-                    ).startCondition(pathAwareEntity -> !hasFood() && pathAwareEntity.getNavigation().isIdle())
+                            }),
+                            new OneRandomBehaviour<>(
+                                    new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
+                                            setFlying()),
+                                    new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(5).whenStarting((pathAwareEntity) ->
+                                            setFlying()),
+                                    new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
+                                            setGrounded()),
+                                    new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
+                            ).startCondition(pathAwareEntity -> !hasFood() && pathAwareEntity.getNavigation().isIdle())
+                    )
                 );
     }
 
