@@ -219,7 +219,12 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                                     new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70),
                                     new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
                                     new StealFoodFromPlayer<>()
-                            )
+                            ).cooldownFor((pathAwareEntity) -> {
+                                if(hasFood()) {
+                                    return 2400;
+                                }
+                                return 0;
+                            })
                     ),
                     new OneRandomBehaviour<>(
                             new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
