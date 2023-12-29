@@ -73,10 +73,10 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
     private void setHeadAngles(float headYaw, float headPitch) {
         // Thanks to Tutorials By Kaupenjoe for this bit
         headYaw = MathHelper.clamp(headYaw, -30.0F, 30.0F);
-        headPitch = MathHelper.clamp(headPitch, -25.0F, 45.0F);
+        headPitch = MathHelper.clamp(headPitch, -30.0F, 30.0F);
 
         this.headAndNeck.yaw = headYaw * 0.017453292F;
-        this.headAndNeck.pitch = headPitch * 0.017453292F;
+        this.headAndNeck.pitch = headPitch * -0.017453292F;
     }
 
     @Override
