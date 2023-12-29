@@ -15,7 +15,7 @@ public class SeagullEntityRenderer extends MobEntityRenderer<SeagullEntity, Seag
     private static final Identifier SEAGULL_TEXTURE = new Identifier(PeskySeagulls.MOD_ID, "textures/entity/seagull.png");
 
     public SeagullEntityRenderer(EntityRendererFactory.Context context) {
-        super(context, new SeagullEntityModel<>(context.getPart(ModelLayers.SEAGULL)),0.3F);
+        super(context, new SeagullEntityModel<>(context.getPart(ModelLayers.SEAGULL)),0.6F);
     }
 
 
@@ -27,12 +27,6 @@ public class SeagullEntityRenderer extends MobEntityRenderer<SeagullEntity, Seag
     @Override
     public void render(SeagullEntity mobEntity, float f, float g, MatrixStack matrixStack,
                        VertexConsumerProvider vertexConsumerProvider, int i) {
-        if(mobEntity.isBaby()) {
-            matrixStack.scale(0.5f, 0.5f, 0.5f);
-        } else {
-            matrixStack.scale(1f, 1f, 1f);
-        }
-
         super.render(mobEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 }
