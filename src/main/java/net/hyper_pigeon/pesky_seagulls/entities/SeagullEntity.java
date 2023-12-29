@@ -30,10 +30,7 @@ import net.minecraft.world.World;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
-import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
-import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.GroupBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.*;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
@@ -186,7 +183,6 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     }
 
 
-
     @Override
     public List<? extends ExtendedSensor<? extends SeagullEntity>> getSensors() {
         return ObjectArrayList.of(
@@ -208,7 +204,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                     new SeagullAvoidEntity<>().avoiding(livingEntity ->  livingEntity instanceof PlayerEntity)
                             .noCloserThan(8).speedModifier(1.75F).whenStarting(pathAwareEntity -> setFlying()).
                             startCondition(pathAwareEntity -> hasFood()), //avoid players when carrying food
-                    new LookAtTarget<>(), //look at look target
+                    new LookAtTarget<>().runFor(entity -> entity.getRandom().nextBetween(40, 200)), //look at look target
                     new MoveToWalkTarget<>()//move to walk target
         );
     }
@@ -220,7 +216,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                     new FirstApplicableBehaviour<>(
                             new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()), //set walk target to visible wanted item
                             new AllApplicableBehaviours<>(
-                                    new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()), //set walk target to player holding food in mainhand
+                                    new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70),
+                                    new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
                                     new StealFoodFromPlayer<>()
                             )
                     ),

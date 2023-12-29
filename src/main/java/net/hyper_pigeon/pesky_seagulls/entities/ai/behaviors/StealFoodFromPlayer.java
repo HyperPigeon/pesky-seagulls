@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -67,5 +68,13 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
 
     protected boolean shouldKeepRunning(E entity) {
         return canStealFromPlayer(targetPlayer, entity);
+    }
+
+    protected void stop(E entity){
+        if(entity.getMainHandStack().isFood()) {
+            BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+            BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
+            BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
+        }
     }
 }
