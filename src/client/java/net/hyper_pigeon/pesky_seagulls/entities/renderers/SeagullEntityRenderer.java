@@ -1,5 +1,6 @@
 package net.hyper_pigeon.pesky_seagulls.entities.renderers;
 
+import net.hyper_pigeon.pesky_seagulls.PeskySeagulls;
 import net.hyper_pigeon.pesky_seagulls.entities.ModelLayers;
 import net.hyper_pigeon.pesky_seagulls.entities.SeagullEntity;
 import net.hyper_pigeon.pesky_seagulls.entities.models.SeagullEntityModel;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 public class SeagullEntityRenderer extends MobEntityRenderer<SeagullEntity, SeagullEntityModel<SeagullEntity>> {
 
-    private static final Identifier SEAGULL_TEXTURE = new Identifier("textures/entity/seagull.png");
+    private static final Identifier SEAGULL_TEXTURE = new Identifier(PeskySeagulls.MOD_ID, "textures/entity/seagull.png");
 
     public SeagullEntityRenderer(EntityRendererFactory.Context context) {
         super(context, new SeagullEntityModel<>(context.getPart(ModelLayers.SEAGULL)),0.3F);
