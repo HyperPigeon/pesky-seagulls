@@ -25,16 +25,18 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
         return MEMORY_REQUIREMENTS;
     }
 
+    public boolean hasFood(E entity) {
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+    }
+
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        if (!entity.getMainHandStack().isEmpty()) {
-            return false;
-        }
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
-        return player != null
+        return !hasFood(entity) && player != null
                 && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood());
         // TODO changing targets
     }
+
 
     @Override
     protected void start(E entity) {
@@ -54,7 +56,13 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
         BrainUtils.setMemory(entity, MemoryModuleType.LOOK_TARGET, entityLookTarget);
     }
 
-    protected boolean shouldKeepRunning(E entity) {
-        return BrainUtils.hasMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER) && this.targetPlayer != null && !this.targetPlayer.isRemoved();
-    }
+//    protected boolean shouldKeepRunning(E entity) {
+//        return !hasFood(entity) && BrainUtils.hasMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER) && this.targetPlayer != null && !this.targetPlayer.isRemoved();
+//    }
+//
+//    protected void stop(E entity){
+//        //clear the current walk and look target
+//        BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+//        BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
+//    }
 }

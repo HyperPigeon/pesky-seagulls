@@ -11,35 +11,28 @@ import java.util.List;
 
 public class EatFoodInMainHand<E extends PathAwareEntity> extends ExtendedBehaviour<E> {
 
-    private int eatingTicks = 0;
-
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryModuleState>> getMemoryRequirements() {
         return List.of();
     }
 
-    @Override
-    protected boolean shouldRun(ServerWorld level, E entity) {
+    public boolean hasFood(E entity) {
         return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
     }
 
     @Override
-    protected void start(E entity) {
-        eatingTicks = 200;
+    protected boolean shouldRun(ServerWorld level, E entity) {
+        return hasFood(entity);
     }
+
 
     protected boolean shouldKeepRunning(E entity) {
-        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood() && eatingTicks > 0;
-    }
-
-    @Override
-    protected void tick(E entity) {
-        eatingTicks--;
+        return hasFood(entity);
     }
 
     @Override
     protected void stop(E entity) {
-        if(!entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood()) {
+        if(hasFood(entity)) {
             entity.eatFood(entity.getWorld(),entity.getMainHandStack());
             entity.heal(5.0F);
         }
