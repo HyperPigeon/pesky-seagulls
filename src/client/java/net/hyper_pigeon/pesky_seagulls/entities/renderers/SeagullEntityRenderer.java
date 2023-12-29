@@ -16,6 +16,7 @@ public class SeagullEntityRenderer extends MobEntityRenderer<SeagullEntity, Seag
 
     public SeagullEntityRenderer(EntityRendererFactory.Context context) {
         super(context, new SeagullEntityModel<>(context.getPart(ModelLayers.SEAGULL)),0.6F);
+        this.addFeature(new SeagullHeldItemFeatureRenderer(this, context.getHeldItemRenderer()));
     }
 
 
