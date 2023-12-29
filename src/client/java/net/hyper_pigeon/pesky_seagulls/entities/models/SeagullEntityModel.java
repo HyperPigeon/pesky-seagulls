@@ -1,6 +1,7 @@
 package net.hyper_pigeon.pesky_seagulls.entities.models;
 
 import net.hyper_pigeon.pesky_seagulls.entities.SeagullEntity;
+import net.hyper_pigeon.pesky_seagulls.entities.animation.SeagullAnimations;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.SinglePartEntityModel;
@@ -18,6 +19,7 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
         this.seagull = root.getChild("seagull");
         this.headAndNeck = seagull.getChild("body").getChild("headAndNeck");
     }
+
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
@@ -30,10 +32,10 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
 
         ModelPartData back_r1 = mainbody.addChild("back_r1", ModelPartBuilder.create().uv(0, 0).cuboid(-3.0F, -2.0F, -7.0F, 6.0F, 7.0F, 12.0F, new Dilation(0.0F)), ModelTransform.of(1.0F, -5.0F, -3.0F, -0.0436F, 0.0F, 0.0F));
 
-        ModelPartData headAndNeck = body.addChild("headAndNeck", ModelPartBuilder.create().uv(0, 0).cuboid(-1.0F, -12.0F, 0.0F, 2.0F, 8.0F, 3.0F, new Dilation(0.0F))
-                .uv(24, 0).cuboid(-2.0F, -14.0F, -0.25F, 4.0F, 3.0F, 4.0F, new Dilation(0.0F)), ModelTransform.pivot(-1.0F, 0.0F, 4.25F));
+        ModelPartData headAndNeck = body.addChild("headAndNeck", ModelPartBuilder.create().uv(0, 0).cuboid(-1.0F, -7.0F, 0.0F, 2.0F, 8.0F, 3.0F, new Dilation(0.0F))
+                .uv(24, 0).cuboid(-2.0F, -9.0F, -0.25F, 4.0F, 3.0F, 4.0F, new Dilation(0.0F)), ModelTransform.pivot(-1.0F, -5.0F, 4.25F));
 
-        ModelPartData beak = headAndNeck.addChild("beak", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, -12.5F, 3.75F));
+        ModelPartData beak = headAndNeck.addChild("beak", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, -7.5F, 3.75F));
 
         ModelPartData bottombeak_r1 = beak.addChild("bottombeak_r1", ModelPartBuilder.create().uv(0, 19).cuboid(-1.0F, -0.5F, -1.0F, 1.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.5F, 1.0F, 0.0F, 0.0453F, 0.0F, 0.0F));
 
@@ -44,11 +46,11 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
 
         ModelPartData legs = body.addChild("legs", ModelPartBuilder.create(), ModelTransform.pivot(-1.0F, 0.0F, 1.0F));
 
-        ModelPartData LeftWholeLeg = legs.addChild("LeftWholeLeg", ModelPartBuilder.create().uv(4, 24).cuboid(0.0F, -3.0F, -1.0F, 1.0F, 4.0F, 1.0F, new Dilation(0.0F))
-                .uv(6, -1).cuboid(0.0F, 1.0F, -1.0F, 1.0F, 0.0F, 3.0F, new Dilation(0.0F)), ModelTransform.pivot(-1.25F, 3.0F, 0.0F));
+        ModelPartData LeftWholeLeg = legs.addChild("LeftWholeLeg", ModelPartBuilder.create().uv(4, 24).cuboid(-2.0F, 0.5F, -0.5F, 1.0F, 4.0F, 1.0F, new Dilation(0.0F))
+                .uv(6, -1).cuboid(-2.0F, 4.5F, -0.5F, 1.0F, 0.0F, 3.0F, new Dilation(0.0F)), ModelTransform.pivot(0.75F, -0.5F, -0.5F));
 
-        ModelPartData rightWholeLeg = legs.addChild("rightWholeLeg", ModelPartBuilder.create().uv(4, -1).cuboid(1.5F, 1.0F, -1.0F, 1.0F, 0.0F, 3.0F, new Dilation(0.0F))
-                .uv(0, 24).cuboid(1.5F, -3.0F, -1.0F, 1.0F, 4.0F, 1.0F, new Dilation(0.0F)), ModelTransform.pivot(-1.25F, 3.0F, 0.0F));
+        ModelPartData rightWholeLeg = legs.addChild("rightWholeLeg", ModelPartBuilder.create().uv(4, -1).cuboid(1.0F, 4.5F, -0.5F, 1.0F, 0.0F, 3.0F, new Dilation(0.0F))
+                .uv(0, 24).cuboid(1.0F, 0.5F, -0.5F, 1.0F, 4.0F, 1.0F, new Dilation(0.0F)), ModelTransform.pivot(-0.75F, -0.5F, -0.5F));
 
         ModelPartData leftWing = body.addChild("leftWing", ModelPartBuilder.create(), ModelTransform.pivot(-5.0F, -6.0F, 4.0F));
 
@@ -65,9 +67,10 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
     }
     @Override
     public void setAngles(SeagullEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        // TODO head pitch is flipped
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(netHeadYaw, headPitch);
+
+        this.animateMovement(SeagullAnimations.WALKING, limbSwing, limbSwingAmount, 2f, 2.5f);
     }
 
     private void setHeadAngles(float headYaw, float headPitch) {
