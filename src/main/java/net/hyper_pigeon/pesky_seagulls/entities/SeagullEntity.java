@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
-import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.*;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
@@ -169,6 +169,10 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return null;
     }
 
+    public boolean hasFood() {
+        return !this.getMainHandStack().isEmpty() && this.getMainHandStack().getItem().isFood();
+    }
+
     protected Brain.Profile<SeagullEntity> createBrainProfile() {
         return new SmartBrainProvider<>(this);
     }
@@ -197,28 +201,35 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public BrainActivityGroup<? extends SeagullEntity> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                     new FloatToSurfaceOfFluid<>(),
-                    new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()),
-                    new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
-                    new StealFoodFromPlayer<>().whenStarting(pathAwareEntity -> setFlying()),
-                    new EatFoodInMainHand<>(),
-                    new SeagullAvoidEntity<>().avoiding(livingEntity -> !this.getMainHandStack().isEmpty() && livingEntity instanceof PlayerEntity).noCloserThan(8).speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()),
-                    new LookAtTarget<>(),
-                    new MoveToWalkTarget<>()
+                    new SeagullAvoidEntity<>().avoiding(livingEntity ->  livingEntity instanceof PlayerEntity)
+                            .noCloserThan(8).speedModifier(1.75F).whenStarting(pathAwareEntity -> setFlying()).
+                            startCondition(pathAwareEntity -> hasFood()), //avoid players when carrying food
+                    new LookAtTarget<>().runFor(entity -> entity.getRandom().nextBetween(40, 200)), //look at look target
+                    new MoveToWalkTarget<>()//move to walk target
         );
     }
 
     @Override
     public BrainActivityGroup<? extends SeagullEntity> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
-                new OneRandomBehaviour<>(
-                        new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
-                                setFlying()),
-                        new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(5).whenStarting((pathAwareEntity) ->
-                                setFlying()),
-                        new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
-                                setGrounded()),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
-                )
+                    new EatFoodInMainHand<>().runFor((entity) -> 300),//eat food if in mainhand slot
+                    new FirstApplicableBehaviour<>(
+                            new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()), //set walk target to visible wanted item
+                            new AllApplicableBehaviours<>(
+                                    new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70),
+                                    new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
+                                    new StealFoodFromPlayer<>()
+                            )
+                    ),
+                    new OneRandomBehaviour<>(
+                            new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
+                                    setFlying()),
+                            new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(5).whenStarting((pathAwareEntity) ->
+                                    setFlying()),
+                            new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
+                                    setGrounded()),
+                            new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
+                    ).startCondition(pathAwareEntity -> !hasFood() && pathAwareEntity.getNavigation().isIdle())
                 );
     }
 
