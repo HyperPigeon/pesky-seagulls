@@ -10,6 +10,7 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 
 public class SeagullHeldItemFeatureRenderer extends FeatureRenderer<SeagullEntity, SeagullEntityModel<SeagullEntity>> {
@@ -20,17 +21,32 @@ public class SeagullHeldItemFeatureRenderer extends FeatureRenderer<SeagullEntit
     }
 
     @Override
-    public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, SeagullEntity seagullEntity, float f, float g, float h, float j, float k, float l) {
+    public void render(MatrixStack matrixStack,
+                       VertexConsumerProvider vertexConsumerProvider,
+                       int light,
+                       SeagullEntity seagullEntity,
+                       float limbAngle,
+                       float limbDistance,
+                       float tickDelta,
+                       float animationProgress,
+                       float headYaw,
+                       float headPitch) {
         matrixStack.push();
         SeagullEntityModel<SeagullEntity> contextModel = this.getContextModel();
-        matrixStack.translate(contextModel.beak.pivotX / 16.0f, contextModel.beak.pivotY / 16.0f, contextModel.beak.pivotZ / 16.0f);
-        //matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(h));
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(k));
-        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(l));
-        matrixStack.translate(0f, 1f, -1f);
-        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0f));
+        matrixStack.translate(contextModel.headAndNeck.pivotX / 16.0f, contextModel.headAndNeck.pivotY / 16.0f, contextModel.headAndNeck.pivotZ / 16.0f);
+        float yaw = headYaw;
+        float pitch = headPitch;
+//        yaw = MathHelper.clamp(yaw, -30.0F, 30.0F);
+//        pitch = MathHelper.clamp(pitch, -30.0F, 30.0F);
+//        //yaw = yaw * 0.017453292F;
+//        //pitch = pitch * -0.017453292F;
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw));
+        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(pitch));
         ItemStack itemStack = seagullEntity.getEquippedStack(EquipmentSlot.MAINHAND);
-        this.heldItemRenderer.renderItem(seagullEntity, itemStack, ModelTransformationMode.GROUND, false, matrixStack, vertexConsumerProvider, i);
+        matrixStack.translate(0f, 0.3f, -1.2f); // Move to be in mouth
+        // Make item sideways and at the same angle as head
+        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(100.0f));
+        this.heldItemRenderer.renderItem(seagullEntity, itemStack, ModelTransformationMode.GROUND, false, matrixStack, vertexConsumerProvider, light);
         matrixStack.pop();
     }
 }
