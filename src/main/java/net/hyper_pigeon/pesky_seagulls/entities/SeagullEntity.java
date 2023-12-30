@@ -30,7 +30,9 @@ import net.minecraft.world.World;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
-import net.tslat.smartbrainlib.api.core.behaviour.*;
+import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
@@ -52,7 +54,6 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     public SeagullEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
-        this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, -1.0F);
         this.setPathfindingPenalty(PathNodeType.WATER, -1.0F);
         this.setPathfindingPenalty(PathNodeType.WATER_BORDER, 16.0F);
         this.setPathfindingPenalty(PathNodeType.COCOA, -1.0F);
@@ -67,7 +68,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public static DefaultAttributeContainer.Builder createSeagullAttributes() {
         return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 12.0)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 1.25F)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 1.5F)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25F)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16F);
 
@@ -220,9 +221,9 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return BrainActivityGroup.coreTasks(
                     new FloatToSurfaceOfFluid<>(),
                     new SeagullAvoidEntity<>().avoiding(livingEntity ->  livingEntity instanceof PlayerEntity)
-                            .noCloserThan(8).speedModifier(1.75F).whenStarting(pathAwareEntity -> setFlying()).
+                            .noCloserThan(9).speedModifier(1.5F).whenStarting(pathAwareEntity -> setFlying()).
                             startCondition(pathAwareEntity -> hasFood()), //avoid players when carrying food
-                    new LookAtTarget<>().runFor(entity -> entity.getRandom().nextBetween(40, 200)), //look at look target
+                    new LookAtTarget<>().runFor(entity -> entity.getRandom().nextBetween(40, 300)), //look at look target
                     new MoveToWalkTarget<>()//move to walk target
         );
     }
@@ -232,27 +233,30 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return BrainActivityGroup.idleTasks(
                     new EatFoodInMainHand<>().runFor((entity) -> 300),//eat food if in mainhand slot
                     new FirstApplicableBehaviour<>(
-                            new MoveToNearestVisibleWantedItem<>().whenStarting(pathAwareEntity -> setFlying()), //set walk target to visible wanted item
+                            new SeagullPanic<>().setRadius(10, 3).speedMod((object) -> 1.5F).whenStarting((pathAwareEntity) ->
+                                    setFlying()),
+                            new MoveToNearestVisibleWantedItem<>().speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()), //set walk target to visible wanted item
                             new AllApplicableBehaviours<>(
-                                    new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70),
-                                    new MoveToNearestPlayerHoldingFood<>().whenStarting(pathAwareEntity -> setFlying()),
+                                    new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70).whenStarting((pathAwareEntity) ->
+                                            setFlying()),
+                                    new MoveToNearestPlayerHoldingFood<>().speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()),
                                     new StealFoodFromPlayer<>()
                             ).cooldownFor((pathAwareEntity) -> {
                                 if(hasFood()) {
                                     return 2400;
                                 }
                                 return 0;
-                            }),
-                            new OneRandomBehaviour<>(
-                                    new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
-                                            setFlying()),
-                                    new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(5).whenStarting((pathAwareEntity) ->
-                                            setFlying()),
-                                    new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
-                                            setGrounded()),
-                                    new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
-                            ).startCondition(pathAwareEntity -> !hasFood() && pathAwareEntity.getNavigation().isIdle())
-                    )
+                            })
+                    ),
+                    new OneRandomBehaviour<>(
+                            new SetRandomSeagullFlightTarget<>().setRadius(10).whenStarting((pathAwareEntity) ->
+                                    setFlying()),
+                            new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(10).whenStarting((pathAwareEntity) ->
+                                    setFlying()),
+                            new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
+                                    setGrounded()),
+                            new Idle<>().runFor(entity -> entity.getRandom().nextBetween(30,60))
+                    ).startCondition(pathAwareEntity -> !hasFood() && pathAwareEntity.getNavigation().isIdle())
                 );
     }
 
@@ -260,5 +264,6 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public BrainActivityGroup<? extends SeagullEntity> getFightTasks() {
         return SmartBrainOwner.super.getFightTasks();
     }
+
 
 }
