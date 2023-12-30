@@ -84,6 +84,10 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
         return this;
     }
 
+    public boolean hasFood(E entity) {
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+    }
+
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
         Optional<LivingEntity> target = BrainUtils.getMemory(entity, MemoryModuleType.VISIBLE_MOBS).findFirst(this.avoidingPredicate);
@@ -143,21 +147,18 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
 
     @Override
     protected boolean shouldKeepRunning(E entity) {
-        return !entity.getNavigation().isIdle();
+        return this.runPath != null && !this.runPath.isFinished() && !entity.getNavigation().isIdle();
     }
+
 
     @Override
     protected void start(E entity) {
-        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
-        BrainUtils.setMemory(entity, MemoryModuleType.PATH, this.runPath);
-
         entity.getNavigation().startMovingAlong(this.runPath, this.speedModifier);
     }
 
     @Override
     protected void stop(E entity) {
         this.runPath = null;
-        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
         entity.getNavigation().setSpeed(1);
     }
 }
