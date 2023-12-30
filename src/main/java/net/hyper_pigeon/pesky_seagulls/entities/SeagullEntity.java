@@ -2,6 +2,7 @@ package net.hyper_pigeon.pesky_seagulls.entities;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.*;
+import net.hyper_pigeon.pesky_seagulls.entities.ai.control.SeagullFlightMoveControl;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -56,6 +57,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.WATER, -1.0F);
         this.setPathfindingPenalty(PathNodeType.WATER_BORDER, 16.0F);
+        this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, -1.0F);
+        this.setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, -1.0F);
         this.setPathfindingPenalty(PathNodeType.COCOA, -1.0F);
         this.setPathfindingPenalty(PathNodeType.FENCE, -1.0F);
         swapNavigation(true);
@@ -85,7 +88,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public void swapNavigation(boolean isFlying) {
         if(isFlying){
             this.navigation = createNavigation(this.getWorld());
-            this.moveControl = new FlightMoveControl(this,15,false);
+            this.moveControl = new SeagullFlightMoveControl(this,15,false);
         }
         else {
             this.navigation = new AmphibiousSwimNavigation(this, this.getWorld());
@@ -234,7 +237,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                     new EatFoodInMainHand<>().runFor((entity) -> 300),//eat food if in mainhand slot
                     new FirstApplicableBehaviour<>(
                             new SeagullPanic<>().setRadius(10, 3).speedMod((object) -> 1.5F).whenStarting((pathAwareEntity) ->
-                                    setFlying()),
+                                    setFlying()).runFor(entity -> entity.getRandom().nextBetween(100, 300)),
                             new MoveToNearestVisibleWantedItem<>().speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()), //set walk target to visible wanted item
                             new AllApplicableBehaviours<>(
                                     new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70).whenStarting((pathAwareEntity) ->

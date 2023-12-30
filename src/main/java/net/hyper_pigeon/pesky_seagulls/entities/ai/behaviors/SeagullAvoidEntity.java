@@ -84,10 +84,6 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
         return this;
     }
 
-    public boolean hasFood(E entity) {
-        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
-    }
-
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
         Optional<LivingEntity> target = BrainUtils.getMemory(entity, MemoryModuleType.VISIBLE_MOBS).findFirst(this.avoidingPredicate);
