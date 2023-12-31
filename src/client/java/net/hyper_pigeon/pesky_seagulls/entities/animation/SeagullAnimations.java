@@ -89,4 +89,14 @@ public class SeagullAnimations {
                     new Transformation(Transformation.Targets.SCALE,
                             new Keyframe(0f, AnimationHelper.createScalingVector(1f, 1.9f, 1f),
                                     Transformation.Interpolations.LINEAR))).build();
+
+    public static final Animation FLOAT = Animation.Builder.create(0.041676664f).looping()
+            .addBoneAnimation("seagull",
+                    new Transformation(Transformation.Targets.TRANSLATE,
+                            new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, -4f, 0f),
+                                    Transformation.Interpolations.LINEAR)))
+            .addBoneAnimation("legs",
+                    new Transformation(Transformation.Targets.ROTATE,
+                            new Keyframe(0f, AnimationHelper.createRotationalVector(-75f, 0f, 0f),
+                                    Transformation.Interpolations.LINEAR))).build();
 }
