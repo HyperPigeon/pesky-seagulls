@@ -52,6 +52,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     public AnimationState walkingAnimationState = new AnimationState();
     public AnimationState flyingAnimationState = new AnimationState();
+    public AnimationState floatingAnimationState = new AnimationState();
 
     public SeagullEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
@@ -64,8 +65,10 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         swapNavigation(true);
     }
 
+    public boolean isFloating() { return this.isInFluid(); }
+
     public boolean isFlapping() {
-        return !this.isOnGround();
+        return !this.isOnGround() && !this.isFloating();
     }
 
     public static DefaultAttributeContainer.Builder createSeagullAttributes() {
@@ -202,7 +205,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     private void setupAnimationStates() {
         flyingAnimationState.setRunning(isFlapping(), this.age);
-        walkingAnimationState.setRunning((float)this.getVelocity().horizontalLengthSquared() > 1.0E-5F && !isFlapping(), this.age);
+        walkingAnimationState.setRunning((float)this.getVelocity().horizontalLengthSquared() > 1.0E-5F && !isFlapping() && !isFloating(), this.age);
+        floatingAnimationState.setRunning(isFloating(), this.age);
     }
 
     @Override

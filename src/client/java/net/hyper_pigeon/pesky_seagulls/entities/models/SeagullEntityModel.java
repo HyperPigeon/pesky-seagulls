@@ -75,6 +75,7 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
         this.animateMovement(SeagullAnimations.WALKING, limbSwing, limbSwingAmount, 2f, 2.5f);
         this.updateAnimation(entity.flyingAnimationState, SeagullAnimations.FLY, ageInTicks);
         this.updateAnimation(entity.walkingAnimationState, SeagullAnimations.WALKING, ageInTicks, speedMult);
+        this.updateAnimation(entity.floatingAnimationState, SeagullAnimations.FLOAT, ageInTicks);
     }
 
     private void setHeadAngles(float headYaw, float headPitch) {
