@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.hyper_pigeon.pesky_seagulls.entities.SeagullEntity;
+import net.hyper_pigeon.pesky_seagulls.entities.Sounds;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.memory_types.SeagullMemoryTypes;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -46,6 +47,7 @@ public class PeskySeagulls implements ModInitializer {
 		SpawnRestriction.register(SEAGULL_ENTITY,SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, PeskySeagulls::isValidNaturalSpawn);
 		BiomeModifications.addSpawn(BiomeSelectors.tag(SEAGULL_SPAWN_BIOMES), SpawnGroup.CREATURE, SEAGULL_ENTITY, 20, 3, 5);
 		FabricDefaultAttributeRegistry.register(SEAGULL_ENTITY, SeagullEntity.createSeagullAttributes());
+		Registry.register(Registries.SOUND_EVENT, Sounds.SEAGULL_CRY_1_ID, Sounds.SEAGULL_CRY_1);
 	}
 
 	public static boolean isValidNaturalSpawn(EntityType<? extends AnimalEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
