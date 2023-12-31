@@ -242,8 +242,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return BrainActivityGroup.idleTasks(
                     new EatFoodInMainHand<>().runFor((entity) -> 300),//eat food if in mainhand slot
                     new FirstApplicableBehaviour<>(
-                            new SeagullPanic<>().setRadius(10, 3).speedMod((object) -> 1.5F).whenStarting((pathAwareEntity) ->
-                                    setFlying()).runFor(entity -> entity.getRandom().nextBetween(100, 300)),
+//                            new SeagullPanic<>().setRadius(10, 3).speedMod((object) -> 1.5F).whenStarting((pathAwareEntity) ->
+//                                    setFlying()).runFor(entity -> entity.getRandom().nextBetween(100, 300)),
                             new MoveToNearestVisibleWantedItem<>().speedModifier(1.2F).whenStarting(pathAwareEntity -> setFlying()), //set walk target to visible wanted item
                             new AllApplicableBehaviours<>(
                                     new SwoopInOnWalkTarget<>().cooldownFor((pathAwareEntity) -> 70).whenStarting((pathAwareEntity) ->
