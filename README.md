@@ -7,3 +7,7 @@ A mod made for Modfest 1.20 that adds bothersome seagulls to Minecraft.
 - Stealing your food!
 - Flying away with your food!
 - Eating your food!
+
+## Credits
+
+Seagull sound effects from https://quicksounds.com

@@ -5,11 +5,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
@@ -46,6 +46,7 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
         stolenFood.setCount(stolenFood.getCount()-1);
         entity.equipStack(EquipmentSlot.MAINHAND, obtainedFood);
         entity.updateDropChances(EquipmentSlot.MAINHAND);
+        entity.playSound(SoundEvents.BLOCK_WOOL_STEP, 1f, 1.5f);
     }
 
     @Override
