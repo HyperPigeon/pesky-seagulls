@@ -1,6 +1,7 @@
 package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.Object2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.entity.ai.brain.EntityLookTarget;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Panic;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
 import java.util.List;
@@ -27,6 +29,25 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
 
     public boolean hasFood(E entity) {
         return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+    }
+
+    /**
+     * Set the movespeed modifier for the path when chosen.
+     * @param modifier The movespeed modifier/multiplier
+     * @return this
+     */
+    public MoveToNearestPlayerHoldingFood<E> speedModifier(float modifier) {
+        return speedModifier((entity, targetPos) -> modifier);
+    }
+
+    /**
+     * Set the movespeed modifier for the path when chosen.
+     * @param function The movespeed modifier/multiplier function
+     * @return this
+     */
+    public MoveToNearestPlayerHoldingFood<E> speedModifier(BiFunction<E, Vec3d, Float> function) {
+        this.speedModifier = function;
+        return this;
     }
 
     @Override

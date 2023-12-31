@@ -49,7 +49,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
                 && player != null
                 && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood())
                 && (player.getY() + 3 > entity.getY())
-                && (entity.squaredDistanceTo(player) >= 16)
+                && (entity.squaredDistanceTo(player) >= 12)
                 && (isSkyVisible(level, entity, entity.getBlockPos()))
                 && (isSkyVisible(level, player, player.getBlockPos()));
     }
@@ -63,13 +63,11 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
         this.targetPlayer = player;
 
         Vec3d swoopPos = new Vec3d(MathHelper.lerp(0.10 + entity.getRandom().nextDouble() * (0.4),entity.getX(), this.targetPlayer.getX()),
-                this.targetPlayer.getY()+3,
+                this.targetPlayer.getY()+4,
                 MathHelper.lerp(0.10 + entity.getRandom().nextDouble() * (0.4),entity.getZ(), this.targetPlayer.getZ()));
 
         this.flyPath = entity.getNavigation().findPathTo(swoopPos.x, swoopPos.y, swoopPos.z, 0);
 
-        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
-        BrainUtils.setMemory(entity, MemoryModuleType.PATH, this.flyPath);
         entity.getNavigation().startMovingAlong(this.flyPath, this.speedModifier);
 
     }
@@ -83,7 +81,6 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
     @Override
     protected void stop(E entity) {
         this.flyPath = null;
-        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
         entity.getNavigation().setSpeed(1);
     }
 
