@@ -23,7 +23,7 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
     private boolean canStealFromPlayer(PlayerEntity player, E entity) {
         return player != null
                 && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood())
-                && (entity.squaredDistanceTo(player) <= 1);
+                && (entity.squaredDistanceTo(player) <= 2);
     }
 
     @Override
