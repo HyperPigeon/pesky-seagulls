@@ -63,7 +63,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
         this.targetPlayer = player;
 
         Vec3d swoopPos = new Vec3d(MathHelper.lerp(0.10 + entity.getRandom().nextDouble() * (0.4),entity.getX(), this.targetPlayer.getX()),
-                this.targetPlayer.getY()+4,
+                this.targetPlayer.getY()+3,
                 MathHelper.lerp(0.10 + entity.getRandom().nextDouble() * (0.4),entity.getZ(), this.targetPlayer.getZ()));
 
         this.flyPath = entity.getNavigation().findPathTo(swoopPos.x, swoopPos.y, swoopPos.z, 0);
@@ -75,7 +75,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
 
     @Override
     protected boolean shouldKeepRunning(E entity) {
-        return this.flyPath != null && !this.flyPath.isFinished();
+        return this.flyPath != null && !this.flyPath.isFinished() && !entity.getNavigation().isIdle();
     }
 
     @Override

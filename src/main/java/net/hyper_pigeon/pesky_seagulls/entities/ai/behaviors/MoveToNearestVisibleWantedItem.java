@@ -65,7 +65,7 @@ public class MoveToNearestVisibleWantedItem<E extends PathAwareEntity> extends E
         this.targetItemEntity = itemEntity;
 
         EntityLookTarget entityLookTarget = new EntityLookTarget(itemEntity, true);
-        WalkTarget walkTarget = new WalkTarget(new EntityLookTarget(itemEntity, false), this.speedModifier.apply(entity,this.targetItemEntity.getPos()), 0);
+        WalkTarget walkTarget = new WalkTarget(new EntityLookTarget(itemEntity, false), this.speedModifier.apply(entity,this.targetItemEntity.getPos()), 1);
 
         BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
         BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, walkTarget);

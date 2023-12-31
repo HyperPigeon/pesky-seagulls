@@ -143,18 +143,21 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
 
     @Override
     protected boolean shouldKeepRunning(E entity) {
-        return this.runPath != null && !this.runPath.isFinished() && !entity.getNavigation().isIdle();
+        return !entity.getNavigation().isIdle();
     }
-
 
     @Override
     protected void start(E entity) {
+        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
+        BrainUtils.setMemory(entity, MemoryModuleType.PATH, this.runPath);
+
         entity.getNavigation().startMovingAlong(this.runPath, this.speedModifier);
     }
 
     @Override
     protected void stop(E entity) {
         this.runPath = null;
+        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
         entity.getNavigation().setSpeed(1);
     }
 }
