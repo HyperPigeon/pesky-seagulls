@@ -257,7 +257,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
                         new OneRandomBehaviour<>(
                                 new SetRandomSeagullFlightTarget<>().setRadius(16,5).whenStarting((pathAwareEntity) ->
                                         setFlying()),
-                                new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(5).whenStarting((pathAwareEntity) ->
+                                new FlyToWater<>().verticalWeight((pathAwareEntity) -> -1).setRadius(10).whenStarting((pathAwareEntity) ->
                                         setFlying()),
                                 new SetRandomSeagullWalkTarget<>().setRadius(5,3).dontAvoidWater().whenStarting((pathAwareEntity) ->
                                         setGrounded()),
