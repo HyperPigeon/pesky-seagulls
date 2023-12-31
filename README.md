@@ -1,9 +1,9 @@
-# Pesky Seagulls
+![Pesky Seagulls](images/pesky_seagulls_banner.png)
 
-## About
+A mod made for Modfest 1.20 that adds bothersome seagulls to Minecraft.
 
-A mod made for Modfest 1.20 that adds bothersome seagulls to Minecraft. 
+## Seagull Features!
 
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+- Stealing your food!
+- Flying away with your food!
+- Eating your food!
