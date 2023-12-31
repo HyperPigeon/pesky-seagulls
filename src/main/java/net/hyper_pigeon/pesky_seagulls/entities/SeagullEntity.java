@@ -23,6 +23,8 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -268,5 +270,21 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return SmartBrainOwner.super.getFightTasks();
     }
 
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return Sounds.SEAGULL_CRY_1;
+    }
 
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.ENTITY_PARROT_DEATH;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundEvents.ENTITY_PARROT_HURT;
+    }
 }
