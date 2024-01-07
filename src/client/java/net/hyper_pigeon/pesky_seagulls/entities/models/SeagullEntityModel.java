@@ -13,11 +13,13 @@ import net.minecraft.util.math.MathHelper;
 
 public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntityModel<T> {
     private final ModelPart seagull;
-    private final ModelPart headAndNeck;
+    public final ModelPart headAndNeck;
+    public final ModelPart beak;
 
     public SeagullEntityModel(ModelPart root) {
         this.seagull = root.getChild("seagull");
         this.headAndNeck = seagull.getChild("body").getChild("headAndNeck");
+        this.beak = headAndNeck.getChild("beak");
     }
 
     public static TexturedModelData getTexturedModelData() {
