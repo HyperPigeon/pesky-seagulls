@@ -31,21 +31,21 @@ public class SeagullHeldItemFeatureRenderer extends FeatureRenderer<SeagullEntit
                        float animationProgress,
                        float headYaw,
                        float headPitch) {
+
         matrixStack.push();
         SeagullEntityModel<SeagullEntity> contextModel = this.getContextModel();
-        matrixStack.translate(contextModel.headAndNeck.pivotX / 16.0f, contextModel.headAndNeck.pivotY / 16.0f, contextModel.headAndNeck.pivotZ / 16.0f);
+        matrixStack.translate(0,1.0F, -0.3F);
         float yaw = headYaw;
         float pitch = headPitch;
-//        yaw = MathHelper.clamp(yaw, -30.0F, 30.0F);
-//        pitch = MathHelper.clamp(pitch, -30.0F, 30.0F);
-//        //yaw = yaw * 0.017453292F;
-//        //pitch = pitch * -0.017453292F;
+        yaw = MathHelper.clamp(yaw, -30.0F, 30.0F);
+        pitch = MathHelper.clamp(pitch, -30.0F, 30.0F);
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw));
         matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(pitch));
         ItemStack itemStack = seagullEntity.getEquippedStack(EquipmentSlot.MAINHAND);
-        matrixStack.translate(0f, 0.3f, -1.2f); // Move to be in mouth
+        matrixStack.translate(0f, -0.45f, -0.5f); // Move to be in mouth
         // Make item sideways and at the same angle as head
         matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(100.0f));
+        matrixStack.scale(0.7F,0.7F,0.7F);
         this.heldItemRenderer.renderItem(seagullEntity, itemStack, ModelTransformationMode.GROUND, false, matrixStack, vertexConsumerProvider, light);
         matrixStack.pop();
     }
