@@ -3,6 +3,7 @@ package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.ai.brain.EntityLookTarget;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -28,7 +29,7 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
     }
 
     public boolean hasFood(E entity) {
-        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().getComponents().contains(DataComponentTypes.FOOD);
     }
 
     /**
@@ -54,7 +55,7 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
     protected boolean shouldRun(ServerWorld level, E entity) {
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return !hasFood(entity) && player != null
-                && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood());
+                && (player.getMainHandStack().getComponents().contains(DataComponentTypes.FOOD) || player.getOffHandStack().getComponents().contains(DataComponentTypes.FOOD));
         // TODO changing targets
     }
 

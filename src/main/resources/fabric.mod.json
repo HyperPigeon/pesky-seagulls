@@ -32,9 +32,9 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.0",
-		"minecraft": "~1.20.4",
-		"java": ">=17",
+		"minecraft": "~1.20.5",
+		"java": ">=21",
 		"fabric-api": "*",
-		"smartbrainlib": "~1.13"
+		"smartbrainlib": "~1.14"
 	}
 }

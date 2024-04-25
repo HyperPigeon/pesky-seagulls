@@ -2,7 +2,7 @@ package net.hyper_pigeon.pesky_seagulls.entities;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.*;
-import net.hyper_pigeon.pesky_seagulls.entities.ai.control.SeagullFlightMoveControl;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -27,7 +27,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
@@ -41,7 +40,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomFlyingTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
@@ -126,6 +124,11 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         }
     }
 
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        return false;
+    }
+
     public boolean isPushedByFluids() {
         return false;
     }
@@ -142,7 +145,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     public boolean canGather(ItemStack stack) {
         ItemStack itemStack = this.getStackInHand(Hand.MAIN_HAND);
-        return stack.getItem().isFood() && itemStack.isEmpty();
+        return stack.getItem().getComponents().contains(DataComponentTypes.FOOD) && itemStack.isEmpty();
     }
 
     public boolean canPickUpLoot() {
@@ -187,7 +190,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     }
 
     public boolean hasFood() {
-        return !this.getMainHandStack().isEmpty() && this.getMainHandStack().getItem().isFood();
+        return !this.getMainHandStack().isEmpty() && this.getMainHandStack().getItem().getComponents().contains(DataComponentTypes.FOOD);
     }
 
     protected Brain.Profile<SeagullEntity> createBrainProfile() {

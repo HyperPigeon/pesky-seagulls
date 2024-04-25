@@ -2,6 +2,7 @@ package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.FuzzyPositions;
 import net.minecraft.entity.ai.FuzzyTargeting;
@@ -35,7 +36,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
     }
 
     public boolean hasFood(E entity) {
-        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().getComponents().contains(DataComponentTypes.FOOD);
     }
 
     public static boolean isSkyVisible(ServerWorld world, LivingEntity entity, BlockPos pos) {
@@ -47,7 +48,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
         PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return !hasFood(entity)
                 && player != null
-                && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood())
+                && (player.getMainHandStack().getComponents().contains(DataComponentTypes.FOOD) || player.getOffHandStack().getComponents().contains(DataComponentTypes.FOOD))
                 && (player.getY() + 3 > entity.getY())
                 && (entity.squaredDistanceTo(player) >= 12)
                 && (isSkyVisible(level, entity, entity.getBlockPos()))

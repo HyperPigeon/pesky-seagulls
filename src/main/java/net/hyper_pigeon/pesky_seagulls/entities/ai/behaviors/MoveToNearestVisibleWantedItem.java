@@ -2,6 +2,7 @@ package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.brain.EntityLookTarget;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -49,7 +50,7 @@ public class MoveToNearestVisibleWantedItem<E extends PathAwareEntity> extends E
     }
 
     public boolean hasFood(E entity) {
-        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().getComponents().contains(DataComponentTypes.FOOD);
     }
 
     @Override
