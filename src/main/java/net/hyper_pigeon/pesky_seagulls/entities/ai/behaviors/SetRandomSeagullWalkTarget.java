@@ -12,7 +12,7 @@ public class SetRandomSeagullWalkTarget<E extends PathAwareEntity> extends SetRa
 
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        return entity.isOnGround() || entity.isInFluid();
+        return entity.isOnGround() || entity.isInsideWaterOrBubbleColumn() || entity.isInLava();
     }
 
     @Override

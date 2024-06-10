@@ -62,7 +62,7 @@ public class PeskySeagulls implements ModInitializer {
 	}
 
 	public static boolean isValidNaturalSpawn(EntityType<? extends AnimalEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-		boolean bl = SpawnReason.isTrialSpawner(spawnReason) ||world.getBaseLightLevel(pos, 0) > 8;
+		boolean bl = world.getBaseLightLevel(pos, 0) > 8;
 		return (world.getBlockState(pos.down()).isIn(BlockTags.ANIMALS_SPAWNABLE_ON) || world.getBlockState(pos.down()).getBlock().equals(Blocks.SAND)) && bl;
 	}
 
