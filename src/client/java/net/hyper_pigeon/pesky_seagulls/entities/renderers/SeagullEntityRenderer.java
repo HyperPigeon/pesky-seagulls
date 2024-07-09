@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 public class SeagullEntityRenderer extends MobEntityRenderer<SeagullEntity, SeagullEntityModel<SeagullEntity>> {
 
-    private static final Identifier SEAGULL_TEXTURE = new Identifier(PeskySeagulls.MOD_ID, "textures/entity/seagull.png");
+    private static final Identifier SEAGULL_TEXTURE = Identifier.of(PeskySeagulls.MOD_ID, "textures/entity/seagull.png");
 
     public SeagullEntityRenderer(EntityRendererFactory.Context context) {
         super(context, new SeagullEntityModel<>(context.getPart(ModelLayers.SEAGULL)),0.6F);

@@ -3,6 +3,7 @@ package net.hyper_pigeon.pesky_seagulls.entities;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.*;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.control.SeagullFlightMoveControl;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -126,6 +127,11 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         }
     }
 
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        return false;
+    }
+
     public boolean isPushedByFluids() {
         return false;
     }
@@ -142,7 +148,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     public boolean canGather(ItemStack stack) {
         ItemStack itemStack = this.getStackInHand(Hand.MAIN_HAND);
-        return stack.getItem().isFood() && itemStack.isEmpty();
+        return stack.contains(DataComponentTypes.FOOD) && itemStack.isEmpty();
     }
 
     public boolean canPickUpLoot() {
@@ -150,7 +156,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     }
 
     public boolean canEquip(ItemStack stack) {
-        EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
+        EquipmentSlot equipmentSlot = this.getPreferredEquipmentSlot(stack);
         if (!this.getEquippedStack(equipmentSlot).isEmpty()) {
             return false;
         } else {
@@ -187,7 +193,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     }
 
     public boolean hasFood() {
-        return !this.getMainHandStack().isEmpty() && this.getMainHandStack().getItem().isFood();
+        return !this.getMainHandStack().isEmpty() && this.getMainHandStack().contains(DataComponentTypes.FOOD);
     }
 
     protected Brain.Profile<SeagullEntity> createBrainProfile() {

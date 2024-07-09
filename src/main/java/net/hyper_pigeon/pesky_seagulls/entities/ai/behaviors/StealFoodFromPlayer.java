@@ -2,6 +2,7 @@ package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -22,7 +23,7 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
 
     private boolean canStealFromPlayer(PlayerEntity player, E entity) {
         return player != null
-                && (player.getMainHandStack().isFood() || player.getOffHandStack().isFood())
+                && (player.getMainHandStack().contains(DataComponentTypes.FOOD) || player.getOffHandStack().contains(DataComponentTypes.FOOD))
                 && (entity.squaredDistanceTo(player) <= 2);
     }
 
@@ -59,10 +60,10 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
         targetPlayer = player;
         ItemStack mainHandStack = targetPlayer.getMainHandStack();
         ItemStack offHandStack;
-        if (mainHandStack != null && mainHandStack.isFood()) {
+        if (mainHandStack != null && mainHandStack.contains(DataComponentTypes.FOOD)) {
             stealFood(player.getMainHandStack(), entity);
         } else if ((offHandStack = targetPlayer.getOffHandStack())!= null
-                && offHandStack.isFood()) {
+                && offHandStack.contains(DataComponentTypes.FOOD)) {
             stealFood(player.getOffHandStack(), entity);
         }
     }
@@ -72,7 +73,7 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
     }
 
     protected void stop(E entity){
-        if(entity.getMainHandStack().isFood()) {
+        if(entity.getMainHandStack().contains(DataComponentTypes.FOOD)) {
             BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
             BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
             BrainUtils.clearMemory(entity, MemoryModuleType.PATH);

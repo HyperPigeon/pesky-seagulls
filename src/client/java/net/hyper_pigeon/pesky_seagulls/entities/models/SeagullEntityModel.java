@@ -90,8 +90,8 @@ public class SeagullEntityModel<T extends SeagullEntity> extends SinglePartEntit
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
-        seagull.render(matrices, vertexConsumer, light, overlay, red, green, blue, alpha);
+    public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, int color) {
+        seagull.render(matrices, vertexConsumer, light, overlay, color);
     }
 
     @Override

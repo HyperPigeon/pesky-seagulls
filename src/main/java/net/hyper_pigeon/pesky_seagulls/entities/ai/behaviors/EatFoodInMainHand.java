@@ -1,6 +1,8 @@
 package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -17,7 +19,7 @@ public class EatFoodInMainHand<E extends PathAwareEntity> extends ExtendedBehavi
     }
 
     public boolean hasFood(E entity) {
-        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().getItem().isFood();
+        return !entity.getMainHandStack().isEmpty() && entity.getMainHandStack().contains(DataComponentTypes.FOOD);
     }
 
     @Override
@@ -33,7 +35,8 @@ public class EatFoodInMainHand<E extends PathAwareEntity> extends ExtendedBehavi
     @Override
     protected void stop(E entity) {
         if(hasFood(entity)) {
-            entity.eatFood(entity.getWorld(),entity.getMainHandStack());
+            FoodComponent foodComponent = entity.getMainHandStack().get(DataComponentTypes.FOOD);
+            entity.eatFood(entity.getWorld(),entity.getMainHandStack(),foodComponent);
             entity.heal(5.0F);
         }
     }

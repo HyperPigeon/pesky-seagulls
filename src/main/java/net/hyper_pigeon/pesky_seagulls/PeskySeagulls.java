@@ -1,10 +1,8 @@
 package net.hyper_pigeon.pesky_seagulls;
 
 import net.fabricmc.api.ModInitializer;
-
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -15,7 +13,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.registry.Registries;
@@ -37,25 +34,25 @@ public class PeskySeagulls implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final EntityType<SeagullEntity> SEAGULL_ENTITY = Registry.register(
-			Registries.ENTITY_TYPE, new Identifier(MOD_ID, "seagull"),
+			Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "seagull"),
 			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, SeagullEntity::new)
 					.dimensions(EntityDimensions.fixed(1F, 1F))
 					.build()
 	);
 
-	public static final TagKey<Biome> SEAGULL_SPAWN_BIOMES = TagKey.of(RegistryKeys.BIOME, new Identifier(MOD_ID, "seagull_spawn_biomes"));
+	public static final TagKey<Biome> SEAGULL_SPAWN_BIOMES = TagKey.of(RegistryKeys.BIOME, Identifier.of(MOD_ID, "seagull_spawn_biomes"));
 
-	public static final Item SEAGULL_SPAWN_EGG = new SpawnEggItem(SEAGULL_ENTITY, 0xFFFFFF, 0xFFA500, new FabricItemSettings());
+	public static final Item SEAGULL_SPAWN_EGG = new SpawnEggItem(SEAGULL_ENTITY, 0xFFFFFF, 0xFFA500, new Item.Settings());
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Spawning pesky seagulls...");
 		SeagullMemoryTypes.init();
-		SpawnRestriction.register(SEAGULL_ENTITY,SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, PeskySeagulls::isValidNaturalSpawn);
+		SpawnRestriction.register(SEAGULL_ENTITY,SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, PeskySeagulls::isValidNaturalSpawn);
 		BiomeModifications.addSpawn(BiomeSelectors.tag(SEAGULL_SPAWN_BIOMES), SpawnGroup.CREATURE, SEAGULL_ENTITY, 20, 3, 5);
 		FabricDefaultAttributeRegistry.register(SEAGULL_ENTITY, SeagullEntity.createSeagullAttributes());
 		Registry.register(Registries.SOUND_EVENT, Sounds.SEAGULL_CRY_1_ID, Sounds.SEAGULL_CRY_1);
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "seagull_spawn_egg"), SEAGULL_SPAWN_EGG);
+		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "seagull_spawn_egg"), SEAGULL_SPAWN_EGG);
 		ItemGroupEvents
 				.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
 				.register((itemGroup) -> itemGroup.add(SEAGULL_SPAWN_EGG));

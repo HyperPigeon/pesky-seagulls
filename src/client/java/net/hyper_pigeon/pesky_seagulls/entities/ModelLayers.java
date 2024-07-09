@@ -6,5 +6,5 @@ import net.minecraft.util.Identifier;
 
 public class ModelLayers {
     public static final EntityModelLayer SEAGULL =
-            new EntityModelLayer(new Identifier(PeskySeagulls.MOD_ID, "seagull"), "main");
+            new EntityModelLayer(Identifier.of(PeskySeagulls.MOD_ID, "seagull"), "main");
 }
