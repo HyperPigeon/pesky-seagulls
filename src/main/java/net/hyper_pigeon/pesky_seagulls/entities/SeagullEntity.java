@@ -69,7 +69,9 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         swapNavigation(true);
     }
 
-    public boolean isFloating() { return this.isInFluid(); }
+    public boolean isFloating() {
+        return this.isInsideWaterOrBubbleColumn() || this.isInLava();
+    }
 
     public boolean isFlapping() {
         return !this.isOnGround() && !this.isFloating();
