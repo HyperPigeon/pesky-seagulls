@@ -1,7 +1,6 @@
 package net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors;
 
 import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.objects.Object2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.ai.brain.EntityLookTarget;
@@ -13,8 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Panic;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -53,7 +51,7 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
 
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
+        PlayerEntity player = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return !hasFood(entity) && player != null
                 && (player.getMainHandStack().contains(DataComponentTypes.FOOD) || player.getOffHandStack().contains(DataComponentTypes.FOOD));
         // TODO changing targets
@@ -62,7 +60,7 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
 
     @Override
     protected void start(E entity) {
-        PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
+        PlayerEntity player = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
         if (player == null) {
             return;
         }
@@ -71,20 +69,20 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
         EntityLookTarget entityLookTarget = new EntityLookTarget(player, true);
         WalkTarget walkTarget = new WalkTarget(new EntityLookTarget(player, false), this.speedModifier.apply(entity,this.targetPlayer.getPos()), 1);
 
-        BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
-        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, walkTarget);
+        BrainUtil.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+        BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, walkTarget);
 
-        BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
-        BrainUtils.setMemory(entity, MemoryModuleType.LOOK_TARGET, entityLookTarget);
+        BrainUtil.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
+        BrainUtil.setMemory(entity, MemoryModuleType.LOOK_TARGET, entityLookTarget);
     }
 
 //    protected boolean shouldKeepRunning(E entity) {
-//        return !hasFood(entity) && BrainUtils.hasMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER) && this.targetPlayer != null && !this.targetPlayer.isRemoved();
+//        return !hasFood(entity) && BrainUtil.hasMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER) && this.targetPlayer != null && !this.targetPlayer.isRemoved();
 //    }
 //
 //    protected void stop(E entity){
 //        //clear the current walk and look target
-//        BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
-//        BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
+//        BrainUtil.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+//        BrainUtil.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
 //    }
 }

@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
         if (!entity.getMainHandStack().isEmpty()) {
             return false;
         }
-        PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
+        PlayerEntity player = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return canStealFromPlayer(player, entity);
     }
 
@@ -46,14 +46,14 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
         ItemStack obtainedFood = stolenFood.copyWithCount(1);
         stolenFood.setCount(stolenFood.getCount()-1);
         entity.equipStack(EquipmentSlot.MAINHAND, obtainedFood);
-        entity.updateDropChances(EquipmentSlot.MAINHAND);
+        entity.setDropGuaranteed(EquipmentSlot.MAINHAND);
         entity.playSound(SoundEvents.BLOCK_WOOL_STEP, 1f, 1.5f);
     }
 
     @Override
     protected void start(E entity) {
         // TODO duplicated code with MoveToNearestPlayerHoldingFood
-        PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
+        PlayerEntity player = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
         if (player == null) {
             return;
         }
@@ -74,9 +74,9 @@ public class StealFoodFromPlayer<E extends PathAwareEntity> extends ExtendedBeha
 
     protected void stop(E entity){
         if(entity.getMainHandStack().contains(DataComponentTypes.FOOD)) {
-            BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
-            BrainUtils.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
-            BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
+            BrainUtil.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+            BrainUtil.clearMemory(entity, MemoryModuleType.LOOK_TARGET);
+            BrainUtil.clearMemory(entity, MemoryModuleType.PATH);
         }
     }
 }

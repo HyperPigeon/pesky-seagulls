@@ -6,7 +6,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 public class SetRandomSeagullWalkTarget<E extends PathAwareEntity> extends SetRandomWalkTarget<E> {
 
@@ -23,10 +23,10 @@ public class SetRandomSeagullWalkTarget<E extends PathAwareEntity> extends SetRa
             targetPos = null;
 
         if (targetPos == null) {
-            BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+            BrainUtil.clearMemory(entity, MemoryModuleType.WALK_TARGET);
         }
         else {
-            BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, this.speedModifier.apply(entity, targetPos), 1));
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, this.speedModifier.applyAsFloat(entity, targetPos), 1));
         }
     }
 

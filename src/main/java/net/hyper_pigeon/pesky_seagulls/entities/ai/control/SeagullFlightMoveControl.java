@@ -14,6 +14,6 @@ public class SeagullFlightMoveControl extends FlightMoveControl {
     @Override
     public void tick() {
         super.tick();
-        this.entity.setUpwardSpeed((float) MathHelper.clamp(this.entity.upwardSpeed,-this.entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED),this.entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)));
+        this.entity.setUpwardSpeed((float) MathHelper.clamp(this.entity.upwardSpeed,-this.entity.getAttributeValue(EntityAttributes.MOVEMENT_SPEED),this.entity.getAttributeValue(EntityAttributes.MOVEMENT_SPEED)));
     }
 }

@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomHoverTarget;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends SetRandomHoverTarget<E> {
@@ -40,10 +40,10 @@ public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends Set
             targetPos = null;
 
         if (targetPos == null) {
-            BrainUtils.clearMemory(entity, MemoryModuleType.WALK_TARGET);
+            BrainUtil.clearMemory(entity, MemoryModuleType.WALK_TARGET);
         }
         else {
-            BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, this.speedModifier.apply(entity, targetPos), 1));
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, this.speedModifier.applyAsFloat(entity, targetPos), 1));
         }
     }
 
@@ -66,7 +66,7 @@ public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends Set
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopY(),
+                                    entity.getWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity, pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

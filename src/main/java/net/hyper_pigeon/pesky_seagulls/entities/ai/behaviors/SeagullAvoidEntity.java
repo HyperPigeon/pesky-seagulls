@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
 
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        Optional<LivingEntity> target = BrainUtils.getMemory(entity, MemoryModuleType.VISIBLE_MOBS).findFirst(this.avoidingPredicate);
+        Optional<LivingEntity> target = BrainUtil.getMemory(entity, MemoryModuleType.VISIBLE_MOBS).findFirst(this.avoidingPredicate);
 
         if (target.isEmpty())
             return false;
@@ -129,7 +129,7 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopY(),
+                                    entity.getWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity,pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)
@@ -148,8 +148,8 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
 
     @Override
     protected void start(E entity) {
-        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
-        BrainUtils.setMemory(entity, MemoryModuleType.PATH, this.runPath);
+        BrainUtil.clearMemory(entity, MemoryModuleType.PATH);
+        BrainUtil.setMemory(entity, MemoryModuleType.PATH, this.runPath);
 
         entity.getNavigation().startMovingAlong(this.runPath, this.speedModifier);
     }
@@ -157,7 +157,7 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
     @Override
     protected void stop(E entity) {
         this.runPath = null;
-        BrainUtils.clearMemory(entity, MemoryModuleType.PATH);
+        BrainUtil.clearMemory(entity, MemoryModuleType.PATH);
         entity.getNavigation().setSpeed(1);
     }
 }

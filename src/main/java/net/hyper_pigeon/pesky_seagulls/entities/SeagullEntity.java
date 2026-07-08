@@ -2,7 +2,6 @@ package net.hyper_pigeon.pesky_seagulls.entities;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.behaviors.*;
-import net.hyper_pigeon.pesky_seagulls.entities.ai.control.SeagullFlightMoveControl;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
@@ -28,7 +27,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
@@ -42,7 +40,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FloatToSurfaceOfFluid;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomFlyingTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
@@ -78,10 +75,10 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     public static DefaultAttributeContainer.Builder createSeagullAttributes() {
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 12.0)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 1.5F)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25F)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16F);
+                .add(EntityAttributes.MAX_HEALTH, 12.0)
+                .add(EntityAttributes.FLYING_SPEED, 1.5F)
+                .add(EntityAttributes.MOVEMENT_SPEED, 0.25F)
+                .add(EntityAttributes.FOLLOW_RANGE, 16F);
 
     }
 
@@ -89,7 +86,6 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         BirdNavigation birdNavigation = new BirdNavigation(this, world);
         birdNavigation.setCanPathThroughDoors(true);
         birdNavigation.setCanSwim(true);
-        birdNavigation.setCanEnterOpenDoors(true);
         return birdNavigation;
     }
 
@@ -138,7 +134,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     public boolean isClimbing() { return false; }
 
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    @Override
+    public boolean handleFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -146,7 +143,8 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return ITEM_PICKUP_RANGE_EXPANDER;
     }
 
-    public boolean canGather(ItemStack stack) {
+    @Override
+    public boolean canGather(ServerWorld world, ItemStack stack) {
         ItemStack itemStack = this.getStackInHand(Hand.MAIN_HAND);
         return stack.contains(DataComponentTypes.FOOD) && itemStack.isEmpty();
     }
@@ -155,22 +153,14 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
         return true;
     }
 
-    public boolean canEquip(ItemStack stack) {
-        EquipmentSlot equipmentSlot = this.getPreferredEquipmentSlot(stack);
-        if (!this.getEquippedStack(equipmentSlot).isEmpty()) {
-            return false;
-        } else {
-            return equipmentSlot == EquipmentSlot.MAINHAND && super.canEquip(stack);
-        }
-    }
 
-
-    protected void loot(ItemEntity item) {
+    @Override
+    protected void loot(ServerWorld world, ItemEntity item) {
         ItemStack itemStack = item.getStack();
         if (this.canPickupItem(itemStack)) {
             this.triggerItemPickedUpByEntityCriteria(item);
             this.equipStack(EquipmentSlot.MAINHAND, itemStack.split(1));
-            this.updateDropChances(EquipmentSlot.MAINHAND);
+            this.setDropGuaranteed(EquipmentSlot.MAINHAND);
             this.sendPickup(item, itemStack.getCount());
         }
     }
@@ -201,7 +191,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     }
 
     @Override
-    protected void mobTick() {
+    protected void mobTick(ServerWorld world) {
         tickBrain(this);
     }
 
@@ -237,6 +227,7 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
     public BrainActivityGroup<? extends SeagullEntity> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                     new FloatToSurfaceOfFluid<>(),
+                    new SeagullPanic<>().runFor(entity -> entity.getRandom().nextBetween(100, 120)),
                     new SeagullAvoidEntity<>().avoiding(livingEntity ->  livingEntity instanceof PlayerEntity)
                             .noCloserThan(9).speedModifier(1.5F).whenStarting(pathAwareEntity -> setFlying()).
                             startCondition(pathAwareEntity -> hasFood()), //avoid players when carrying food

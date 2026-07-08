@@ -15,14 +15,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Panic;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
 
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        if (!this.shouldPanicPredicate.test(entity, BrainUtils.getMemory(entity, MemoryModuleType.HURT_BY))) {
+        if (!this.shouldPanicPredicate.test(entity, BrainUtil.getMemory(entity, MemoryModuleType.HURT_BY))) {
             return false;
         }
 
@@ -37,7 +37,7 @@ public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
         }
 
         if (this.targetPos == null) {
-            final DamageSource lastDamage = BrainUtils.getMemory(entity, MemoryModuleType.HURT_BY);
+            final DamageSource lastDamage = BrainUtil.getMemory(entity, MemoryModuleType.HURT_BY);
 
             if (lastDamage != null && lastDamage.getAttacker() instanceof LivingEntity attacker)
                 this.targetPos = SeagullPanic.findFrom(entity, attacker.getPos(), (int)this.radius.xzRadius(), (int)this.radius.yRadius(), 8, 0);
@@ -76,7 +76,7 @@ public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopY(),
+                                    entity.getWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity,pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

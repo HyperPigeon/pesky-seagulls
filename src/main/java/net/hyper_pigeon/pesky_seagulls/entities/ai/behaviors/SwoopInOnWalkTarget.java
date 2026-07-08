@@ -19,7 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
 
     @Override
     protected boolean shouldRun(ServerWorld level, E entity) {
-        PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
+        PlayerEntity player = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
         return !hasFood(entity)
                 && player != null
                 && (player.getMainHandStack().contains(DataComponentTypes.FOOD) || player.getOffHandStack().contains(DataComponentTypes.FOOD))
@@ -57,7 +57,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
 
     @Override
     protected void start(E entity) {
-        PlayerEntity player = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
+        PlayerEntity player = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER); // targetable so won't steal in creative mode
         if (player == null) {
             return;
         }
@@ -105,7 +105,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopY(),
+                                    entity.getWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity, pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

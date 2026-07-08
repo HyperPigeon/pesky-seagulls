@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.hyper_pigeon.pesky_seagulls.entities.SeagullEntity;
 import net.hyper_pigeon.pesky_seagulls.entities.Sounds;
 import net.hyper_pigeon.pesky_seagulls.entities.ai.memory_types.SeagullMemoryTypes;
@@ -17,6 +16,7 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
@@ -33,16 +33,20 @@ public class PeskySeagulls implements ModInitializer {
 	public static final String MOD_ID = "pesky_seagulls";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static final RegistryKey<EntityType<?>> SEAGULL_ENTITY_KEY = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "seagull"));
+
 	public static final EntityType<SeagullEntity> SEAGULL_ENTITY = Registry.register(
-			Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "seagull"),
-			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, SeagullEntity::new)
-					.dimensions(EntityDimensions.fixed(1F, 1F))
-					.build()
+			Registries.ENTITY_TYPE, SEAGULL_ENTITY_KEY,
+			EntityType.Builder.create(SeagullEntity::new, SpawnGroup.CREATURE)
+					.dimensions(1F, 1F)
+					.build(SEAGULL_ENTITY_KEY)
 	);
 
 	public static final TagKey<Biome> SEAGULL_SPAWN_BIOMES = TagKey.of(RegistryKeys.BIOME, Identifier.of(MOD_ID, "seagull_spawn_biomes"));
 
-	public static final Item SEAGULL_SPAWN_EGG = new SpawnEggItem(SEAGULL_ENTITY, 0xFFFFFF, 0xFFA500, new Item.Settings());
+	public static final RegistryKey<Item> SEAGULL_SPAWN_EGG_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "seagull_spawn_egg"));
+
+	public static final Item SEAGULL_SPAWN_EGG = new SpawnEggItem(SEAGULL_ENTITY, new Item.Settings().registryKey(SEAGULL_SPAWN_EGG_KEY));
 
 	@Override
 	public void onInitialize() {
@@ -52,7 +56,7 @@ public class PeskySeagulls implements ModInitializer {
 		BiomeModifications.addSpawn(BiomeSelectors.tag(SEAGULL_SPAWN_BIOMES), SpawnGroup.CREATURE, SEAGULL_ENTITY, 20, 3, 5);
 		FabricDefaultAttributeRegistry.register(SEAGULL_ENTITY, SeagullEntity.createSeagullAttributes());
 		Registry.register(Registries.SOUND_EVENT, Sounds.SEAGULL_CRY_1_ID, Sounds.SEAGULL_CRY_1);
-		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "seagull_spawn_egg"), SEAGULL_SPAWN_EGG);
+		Registry.register(Registries.ITEM, SEAGULL_SPAWN_EGG_KEY, SEAGULL_SPAWN_EGG);
 		ItemGroupEvents
 				.modifyEntriesEvent(ItemGroups.SPAWN_EGGS)
 				.register((itemGroup) -> itemGroup.add(SEAGULL_SPAWN_EGG));

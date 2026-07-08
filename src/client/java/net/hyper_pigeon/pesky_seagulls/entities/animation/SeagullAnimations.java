@@ -44,7 +44,7 @@ public class SeagullAnimations {
                             new Keyframe(0f, AnimationHelper.createScalingVector(1f, 4.6f, 1f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("lowerLeftWing",
-                    new Transformation(Transformation.Targets.TRANSLATE,
+                    new Transformation(Transformation.Targets.MOVE_ORIGIN,
                             new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, 0f, 3f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("lowerLeftWing",
@@ -52,7 +52,7 @@ public class SeagullAnimations {
                             new Keyframe(0f, AnimationHelper.createScalingVector(1f, 1.9f, 1f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("upperLeftWing",
-                    new Transformation(Transformation.Targets.TRANSLATE,
+                    new Transformation(Transformation.Targets.MOVE_ORIGIN,
                             new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, 0f, 3f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("upperLeftWing",
@@ -74,7 +74,7 @@ public class SeagullAnimations {
                             new Keyframe(0f, AnimationHelper.createScalingVector(1f, 4.6f, 1f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("upperRightWing2",
-                    new Transformation(Transformation.Targets.TRANSLATE,
+                    new Transformation(Transformation.Targets.MOVE_ORIGIN,
                             new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, 0f, 3f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("upperRightWing2",
@@ -82,7 +82,7 @@ public class SeagullAnimations {
                             new Keyframe(0f, AnimationHelper.createScalingVector(1f, 0.7f, 0.8f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("lowerRightWing",
-                    new Transformation(Transformation.Targets.TRANSLATE,
+                    new Transformation(Transformation.Targets.MOVE_ORIGIN,
                             new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, 0f, 3f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("lowerRightWing",
@@ -92,7 +92,7 @@ public class SeagullAnimations {
 
     public static final Animation FLOAT = Animation.Builder.create(0.041676664f).looping()
             .addBoneAnimation("seagull",
-                    new Transformation(Transformation.Targets.TRANSLATE,
+                    new Transformation(Transformation.Targets.MOVE_ORIGIN,
                             new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, -4f, 0f),
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("legs",
