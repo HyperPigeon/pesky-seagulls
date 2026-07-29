@@ -55,7 +55,7 @@ public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends Set
         return FuzzyPositions.guessBestPathTarget(
                 entity,
                 () -> {
-                    BlockPos blockPos = FuzzyPositions.localFuzz(entity.getRandom(), horizontalRange, verticalRange, 0, x, z, (double)angle);
+                    BlockPos blockPos = FuzzyPositions.localFuzz(entity.getRandom(), 0.0, horizontalRange, verticalRange, 0, x, z, (double)angle);
                     if (blockPos == null) {
                         return null;
                     } else {
@@ -66,7 +66,7 @@ public class SetRandomSeagullFlightTarget<E extends PathAwareEntity> extends Set
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopYInclusive(),
+                                    entity.getEntityWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity, pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

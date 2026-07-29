@@ -98,7 +98,7 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
             return false;
         }
 
-        Vec3d runPos = SeagullAvoidEntity.findFrom(entity, avoidingEntity.getPos(), 16, 7,5,0);
+        Vec3d runPos = SeagullAvoidEntity.findFrom(entity, avoidingEntity.getEntityPos(), 16, 7,5,0);
 
         if (runPos == null || avoidingEntity.squaredDistanceTo(runPos.x, runPos.y, runPos.z) < distToTarget) {
             return false;
@@ -113,12 +113,12 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
     public static Vec3d findFrom(
             PathAwareEntity entity, Vec3d start, int horizontalRange, int verticalRange, int maxAboveSolid, int minAboveSolid
     ) {
-        Vec3d vec3d = entity.getPos().subtract(start);
+        Vec3d vec3d = entity.getEntityPos().subtract(start);
         boolean bl = NavigationConditions.isPositionTargetInRange(entity, horizontalRange);
         return FuzzyPositions.guessBestPathTarget(
                 entity,
                 () -> {
-                    BlockPos blockPos = FuzzyPositions.localFuzz(entity.getRandom(), horizontalRange, verticalRange, 0, vec3d.x, vec3d.z, (double) MathHelper.HALF_PI);
+                    BlockPos blockPos = FuzzyPositions.localFuzz(entity.getRandom(), 0.0, horizontalRange, verticalRange, 0, vec3d.x, vec3d.z, (double) MathHelper.HALF_PI);
                     if (blockPos == null) {
                         return null;
                     } else {
@@ -129,7 +129,7 @@ public class SeagullAvoidEntity<E extends PathAwareEntity> extends ExtendedBehav
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopYInclusive(),
+                                    entity.getEntityWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity,pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

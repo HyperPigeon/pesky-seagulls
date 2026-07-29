@@ -15,7 +15,7 @@ public class FlyToWater<E extends PathAwareEntity> extends SetRandomFlyingTarget
     @Nullable
     @Override
     protected Vec3d getTargetPos(E entity) {
-        BlockPos waterPos = locateClosestWater(entity.getWorld(), entity,  (int)(Math.ceil(this.radius.xzRadius())), (int)Math.ceil(this.radius.yRadius()));
+        BlockPos waterPos = locateClosestWater(entity.getEntityWorld(), entity,  (int)(Math.ceil(this.radius.xzRadius())), (int)Math.ceil(this.radius.yRadius()));
         Vec3d entityFacing = entity.getRotationVec(0);
 
         if (waterPos != null)

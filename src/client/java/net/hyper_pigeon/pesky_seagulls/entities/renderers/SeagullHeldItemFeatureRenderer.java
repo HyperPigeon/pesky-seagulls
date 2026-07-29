@@ -3,7 +3,7 @@ package net.hyper_pigeon.pesky_seagulls.entities.renderers;
 import net.hyper_pigeon.pesky_seagulls.entities.models.SeagullEntityModel;
 import net.hyper_pigeon.pesky_seagulls.entities.state.SeagullEntityRenderState;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,7 +17,7 @@ public class SeagullHeldItemFeatureRenderer extends FeatureRenderer<SeagullEntit
 
     @Override
     public void render(MatrixStack matrixStack,
-                       VertexConsumerProvider vertexConsumerProvider,
+                       OrderedRenderCommandQueue queue,
                        int light,
                        SeagullEntityRenderState state,
                        float limbAngle,
@@ -35,7 +35,7 @@ public class SeagullHeldItemFeatureRenderer extends FeatureRenderer<SeagullEntit
         // Make item sideways and at the same angle as head
         matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(100.0f));
         matrixStack.scale(0.7F,0.7F,0.7F);
-        state.heldItem.render(matrixStack, vertexConsumerProvider, light, OverlayTexture.DEFAULT_UV);
+        state.heldItem.render(matrixStack, queue, light, OverlayTexture.DEFAULT_UV, state.outlineColor);
         matrixStack.pop();
     }
 }

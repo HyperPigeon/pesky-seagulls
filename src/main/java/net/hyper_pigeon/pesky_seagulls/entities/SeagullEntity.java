@@ -84,18 +84,17 @@ public class SeagullEntity extends AnimalEntity implements SmartBrainOwner<Seagu
 
     protected EntityNavigation createNavigation(World world) {
         BirdNavigation birdNavigation = new BirdNavigation(this, world);
-        birdNavigation.setCanPathThroughDoors(true);
         birdNavigation.setCanSwim(true);
         return birdNavigation;
     }
 
     public void swapNavigation(boolean isFlying) {
         if(isFlying){
-            this.navigation = createNavigation(this.getWorld());
+            this.navigation = createNavigation(this.getEntityWorld());
             this.moveControl = new FlightMoveControl(this,15,false);
         }
         else {
-            this.navigation = new AmphibiousSwimNavigation(this, this.getWorld());
+            this.navigation = new AmphibiousSwimNavigation(this, this.getEntityWorld());
             this.moveControl = new MoveControl(this);
         }
     }

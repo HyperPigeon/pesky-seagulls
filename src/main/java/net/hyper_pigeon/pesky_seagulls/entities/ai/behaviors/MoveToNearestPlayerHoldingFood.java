@@ -67,7 +67,7 @@ public class MoveToNearestPlayerHoldingFood<E extends PathAwareEntity> extends E
         this.targetPlayer = player;
 
         EntityLookTarget entityLookTarget = new EntityLookTarget(player, true);
-        WalkTarget walkTarget = new WalkTarget(new EntityLookTarget(player, false), this.speedModifier.apply(entity,this.targetPlayer.getPos()), 1);
+        WalkTarget walkTarget = new WalkTarget(new EntityLookTarget(player, false), this.speedModifier.apply(entity,this.targetPlayer.getEntityPos()), 1);
 
         BrainUtil.clearMemory(entity, MemoryModuleType.WALK_TARGET);
         BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, walkTarget);

@@ -105,7 +105,7 @@ public class SwoopInOnWalkTarget<E extends PathAwareEntity> extends ExtendedBeha
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopYInclusive(),
+                                    entity.getEntityWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity, pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

@@ -40,7 +40,7 @@ public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
             final DamageSource lastDamage = BrainUtil.getMemory(entity, MemoryModuleType.HURT_BY);
 
             if (lastDamage != null && lastDamage.getAttacker() instanceof LivingEntity attacker)
-                this.targetPos = SeagullPanic.findFrom(entity, attacker.getPos(), (int)this.radius.xzRadius(), (int)this.radius.yRadius(), 8, 0);
+                this.targetPos = SeagullPanic.findFrom(entity, attacker.getEntityPos(), (int)this.radius.xzRadius(), (int)this.radius.yRadius(), 8, 0);
 
             if (this.targetPos == null)
                 this.targetPos = NoPenaltyTargeting.find(entity, (int)this.radius.xzRadius(), (int)this.radius.yRadius());
@@ -51,7 +51,7 @@ public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
     @Nullable
     protected Vec3d findNearbyWater(E entity) {
         final BlockPos pos = entity.getBlockPos();
-        final World level = entity.getWorld();
+        final World level = entity.getEntityWorld();
 
         return !level.getBlockState(pos).getCollisionShape(level, pos).isEmpty() ? null : BlockPos.findClosest(entity.getBlockPos(), (int)this.radius.xzRadius(), (int)this.radius.yRadius(), checkPos -> level.getFluidState(checkPos).isIn(FluidTags.WATER)).map(Vec3d::ofBottomCenter).orElse(null);
     }
@@ -60,12 +60,12 @@ public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
     public static Vec3d findFrom(
             PathAwareEntity entity, Vec3d start, int horizontalRange, int verticalRange, int maxAboveSolid, int minAboveSolid
     ) {
-        Vec3d vec3d = entity.getPos().subtract(start);
+        Vec3d vec3d = entity.getEntityPos().subtract(start);
         boolean bl = NavigationConditions.isPositionTargetInRange(entity, horizontalRange);
         return FuzzyPositions.guessBestPathTarget(
                 entity,
                 () -> {
-                    BlockPos blockPos = FuzzyPositions.localFuzz(entity.getRandom(), horizontalRange, verticalRange, 0, vec3d.x, vec3d.z, (double) MathHelper.HALF_PI);
+                    BlockPos blockPos = FuzzyPositions.localFuzz(entity.getRandom(), 0.0, horizontalRange, verticalRange, 0, vec3d.x, vec3d.z, (double) MathHelper.HALF_PI);
                     if (blockPos == null) {
                         return null;
                     } else {
@@ -76,7 +76,7 @@ public class SeagullPanic<E extends PathAwareEntity> extends Panic<E> {
                             blockPos2 = FuzzyPositions.upWhile(
                                     blockPos2,
                                     entity.getRandom().nextInt(maxAboveSolid - minAboveSolid + 1) + minAboveSolid,
-                                    entity.getWorld().getTopYInclusive(),
+                                    entity.getEntityWorld().getTopYInclusive(),
                                     pos -> NavigationConditions.isSolidAt(entity, pos) || NavigationConditions.isWaterAt(entity,pos)
                             );
                             return  !NavigationConditions.hasPathfindingPenalty(entity, blockPos2)

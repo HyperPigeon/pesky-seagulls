@@ -3,6 +3,7 @@ package net.hyper_pigeon.pesky_seagulls.entities.models;
 import net.hyper_pigeon.pesky_seagulls.entities.animation.SeagullAnimations;
 import net.hyper_pigeon.pesky_seagulls.entities.state.SeagullEntityRenderState;
 import net.minecraft.client.model.*;
+import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.util.math.MathHelper;
 
@@ -12,12 +13,18 @@ import net.minecraft.util.math.MathHelper;
 public class SeagullEntityModel extends EntityModel<SeagullEntityRenderState> {
     public final ModelPart headAndNeck;
     public final ModelPart beak;
+    private final Animation walkingAnimation;
+    private final Animation flyingAnimation;
+    private final Animation floatingAnimation;
 
     public SeagullEntityModel(ModelPart root) {
         super(root);
         ModelPart seagull = root.getChild("seagull");
         this.headAndNeck = seagull.getChild("body").getChild("headAndNeck");
         this.beak = headAndNeck.getChild("beak");
+        this.walkingAnimation = SeagullAnimations.WALKING.createAnimation(root);
+        this.flyingAnimation = SeagullAnimations.FLY.createAnimation(root);
+        this.floatingAnimation = SeagullAnimations.FLOAT.createAnimation(root);
     }
 
     public static TexturedModelData getTexturedModelData() {
@@ -72,10 +79,10 @@ public class SeagullEntityModel extends EntityModel<SeagullEntityRenderState> {
         this.setHeadAngles(state.relativeHeadYaw, state.pitch);
         float speedMult = (Math.min((float)state.velocitySquared * 100.0F, 8F))*2;
 
-        this.animateWalking(SeagullAnimations.WALKING, state.limbSwingAnimationProgress, state.limbSwingAmplitude, 2f, 2.5f);
-        this.animate(state.flyingAnimationState, SeagullAnimations.FLY, state.age);
-        this.animate(state.walkingAnimationState, SeagullAnimations.WALKING, state.age, speedMult);
-        this.animate(state.floatingAnimationState, SeagullAnimations.FLOAT, state.age);
+        this.walkingAnimation.applyWalking(state.limbSwingAnimationProgress, state.limbSwingAmplitude, 2f, 2.5f);
+        this.flyingAnimation.apply(state.flyingAnimationState, state.age);
+        this.walkingAnimation.apply(state.walkingAnimationState, state.age, speedMult);
+        this.floatingAnimation.apply(state.floatingAnimationState, state.age);
     }
 
     private void setHeadAngles(float headYaw, float headPitch) {

@@ -46,7 +46,7 @@ public class PeskySeagulls implements ModInitializer {
 
 	public static final RegistryKey<Item> SEAGULL_SPAWN_EGG_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "seagull_spawn_egg"));
 
-	public static final Item SEAGULL_SPAWN_EGG = new SpawnEggItem(SEAGULL_ENTITY, new Item.Settings().registryKey(SEAGULL_SPAWN_EGG_KEY));
+	public static final Item SEAGULL_SPAWN_EGG = new SpawnEggItem(new Item.Settings().registryKey(SEAGULL_SPAWN_EGG_KEY).spawnEgg(SEAGULL_ENTITY));
 
 	@Override
 	public void onInitialize() {

@@ -36,7 +36,7 @@ public class EatFoodInMainHand<E extends PathAwareEntity> extends ExtendedBehavi
     @Override
     protected void stop(E entity) {
         if(hasFood(entity)) {
-            ItemStack remainder = entity.getMainHandStack().finishUsing(entity.getWorld(), entity);
+            ItemStack remainder = entity.getMainHandStack().finishUsing(entity.getEntityWorld(), entity);
             entity.setStackInHand(Hand.MAIN_HAND, remainder);
             entity.heal(5.0F);
         }
